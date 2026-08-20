@@ -65,29 +65,9 @@ export interface Focus {
   pomodoros: number;
 }
 
-export interface TranscriptMessage {
-  id: number;
-  role: 'user' | 'assistant';
-  text: string;
-  at: string;
-}
-
 export interface AppState {
-  ready: boolean;
-  model: string;
-  busy: boolean;
-  started: boolean;
   onboarded: boolean;
   ledger: Ledger;
   phase_progress: string | null;
   focus: Focus;
-  messages: TranscriptMessage[];
 }
-
-export type ForgeEvent =
-  | { type: 'thinking'; text: string }
-  | { type: 'delta'; text: string }
-  | { type: 'ledger'; ledger: Ledger }
-  | { type: 'usage'; input: number; output: number; cache_read: number }
-  | { type: 'done' }
-  | { type: 'error'; message: string };

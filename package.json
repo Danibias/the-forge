@@ -2,15 +2,22 @@
   "name": "the-forge",
   "version": "0.1.0",
   "private": true,
-  "description": "Forge — a long-term full-stack engineering apprenticeship, with a persistent ledger and a learner dashboard.",
+  "description": "Forge — a long-term full-stack engineering apprenticeship: a Claude Code skill, a validated ledger, and a learner dashboard.",
   "type": "module",
-  "workspaces": ["server", "web"],
-  "engines": { "node": ">=22.5" },
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.5"
+  },
   "scripts": {
     "dev": "concurrently -n server,web -c cyan,magenta \"npm:dev -w server\" \"npm:dev -w web\"",
     "build": "npm run build -w web && npm run build -w server",
     "start": "npm run start -w server",
-    "typecheck": "npm run typecheck -w server && npm run typecheck -w web"
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
+    "install-skill": "node scripts/install-skill.mjs",
+    "setup": "npm run build && node scripts/install-skill.mjs && node scripts/install-cli.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
