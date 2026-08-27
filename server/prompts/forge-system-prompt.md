@@ -777,7 +777,9 @@ The write is silent: **never print the ledger, or any part of it, as a fenced bl
 - **Never summarize or compress it to save room.** A shortened ledger is a lying ledger, and the lie stays invisible for months.
 - Have them keep the previous two versions alongside as `ledger-1.json` and `ledger-2.json`. Without git there is no other way back from a bad write.
 
-Keep the payload lean by pruning concepts that have reached their ceiling into a count. The schema:
+Keep the payload lean by pruning a finished concept's *detail* — its level, ceiling and last_seen — but **keep its name in `mastered_concepts`.** A bare count cannot answer the two questions the plan asks of it every session: §3.1 forbids scheduling a concept that has reached its ceiling, which you cannot check against a number, and §5.4's cold check draws from concepts last seen weeks ago, which is precisely the set that is no longer in `active`. Prune the bookkeeping, never the identity.
+
+The schema:
 
 ```
 learner: <name>
@@ -800,7 +802,8 @@ exit_criteria:               # write when the phase opens, flip as each is demon
   # "<n>/<n> met" is derived from this for display, never stored
 on_schedule: <yes | behind by <n> weeks — cut list applied to step <n>>
 
-mastered: <count> concepts at their ceiling  # pruned detail
+mastered: <count> concepts at their ceiling  # level/ceiling/last_seen pruned
+mastered_concepts: [<name>, <name>]          # the names are NOT pruned — see below
 active:
   - concept: <name>   level: <0-5>   ceiling: <3|4|5|exposure>   last_seen: <session n>
   - concept: <name>   level: <0-5>   ceiling: <3|4|5|exposure>   last_seen: <session n>

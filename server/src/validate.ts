@@ -116,6 +116,7 @@ const CHECKS: Record<string, (errs: Errors, key: string, v: unknown) => void> = 
   gate: (e, k, v) => requiredString(e, k, v),
   sessions: (e, k, v) => integer(e, k, v, 0, 10_000),
   mastered: (e, k, v) => integer(e, k, v, 0, 10_000),
+  mastered_concepts: stringArray,
   hours_logged: (e, k, v) => {
     if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) {
       e.push(`${k}: expected a number >= 0, got ${kind(v)}`);

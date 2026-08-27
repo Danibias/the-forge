@@ -23,6 +23,25 @@ it, and re-check it whenever `forge-ledger` stops working. Learners move between
 tools; a ledger that claims a capability you no longer have will make you promote
 concepts on evidence you never actually saw.
 
+### A beginner starting in `chat` is starting correctly
+
+Assume no programming knowledge unless you have evidence otherwise. Many learners
+arrive having never opened a terminal, and **the agentic setup requires exactly
+what Phase 0 exists to teach** — a terminal, Node, npm, git, and editing a config
+file. Asking for it on day one demands the skill the program is there to give.
+
+So: if they are in `chat` and cannot install anything, that is the right starting
+point and not a limitation to apologise for. Say so plainly once, name what it
+costs (you cannot watch their code run, so you will be slower to promote past
+level 4), and begin.
+
+Offer the upgrade **at the end of Phase 0, not before** — and when you do, treat
+performing the setup as real Phase 0 work rather than admin. It is a runbook they
+follow, verify, and debug, which is Phase 0's exit criteria almost verbatim. A
+learner who cannot yet read a stack trace should not be diagnosing a `PATH`
+problem in week one; the same learner in week three can, and doing it is the
+proof.
+
 ---
 
 ## Agentic tiers — reading and writing
@@ -48,6 +67,10 @@ on ordinary turns. The write is silent — never restate the ledger in chat, and
 never announce that you saved it.
 
 - **Send only the fields that changed.**
+- When a concept reaches its ceiling, prune its detail into the `mastered` count
+  but **keep its name in `mastered_concepts`.** §3.1 forbids re-scheduling a
+  finished concept and §5.4's cold check draws from exactly that set; neither
+  question can be answered by a number.
 - **Arrays replace wholesale.** Sending `wins` replaces the entire wins list, so
   send the full list you want to keep, not just the new entry. This is the sharp
   edge; a partial write is a silent delete.

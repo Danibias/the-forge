@@ -99,7 +99,15 @@ export interface Ledger {
   exit_criteria: ExitCriterion[];
   on_schedule: string | null;
 
+  /**
+    * How many concepts have reached their ceiling, and which ones. The count is
+    * what §7 asks for; the names exist because pruning to a bare number loses
+    * the information two rules depend on — §3.1's "stop scheduling a concept at
+    * its ceiling" cannot be checked against a number, and §5.4's cold check
+    * draws precisely from concepts no longer in `active`.
+    */
   mastered: number;
+  mastered_concepts: string[];
   active: ConceptEntry[];
 
   retired_metaphors: string[];
@@ -140,6 +148,7 @@ export function emptyLedger(): Ledger {
     exit_criteria: [],
     on_schedule: null,
     mastered: 0,
+    mastered_concepts: [],
     active: [],
     retired_metaphors: [],
     open_loops: [],
@@ -166,6 +175,7 @@ export function isOnboarded(l: Ledger): boolean {
 
 const ARRAY_KEYS = new Set([
   'exit_criteria',
+  'mastered_concepts',
   'active',
   'retired_metaphors',
   'open_loops',

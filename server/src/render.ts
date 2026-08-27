@@ -31,6 +31,7 @@ export function renderLedger(ledger: Ledger, focus: FocusToday): string {
     exit_criteria: ledger.exit_criteria.map((c) => `[${c.met ? 'x' : ' '}] ${c.text}`),
     on_schedule: ledger.on_schedule,
     mastered: ledger.mastered,
+    mastered_concepts: ledger.mastered_concepts,
     active: ledger.active.map((c) => ({
       concept: c.concept,
       level: c.level,
