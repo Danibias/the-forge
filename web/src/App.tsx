@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getState } from './api';
 import { Dashboard } from './components/Dashboard';
-import type { AppState, Focus } from './types';
+import type { AppState, Focus, FocusDay } from './types';
 
 /**
  * The ledger is written from the terminal, not from here, so the dashboard polls
@@ -30,8 +30,8 @@ export default function App() {
   }, [refresh]);
 
   // Focus is written by this page, so apply it locally instead of waiting a poll.
-  const onFocusLogged = useCallback((focus: Focus) => {
-    setState((s) => (s ? { ...s, focus } : s));
+  const onFocusLogged = useCallback((focus: Focus, week: FocusDay[]) => {
+    setState((s) => (s ? { ...s, focus, week } : s));
   }, []);
 
   if (!state) {
@@ -60,6 +60,7 @@ export default function App() {
         ledger={state.ledger}
         phaseProgress={state.phase_progress}
         focus={state.focus}
+        week={state.week}
         onFocusLogged={onFocusLogged}
       />
     </div>

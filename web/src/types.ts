@@ -65,9 +65,15 @@ export interface Focus {
   pomodoros: number;
 }
 
+export interface FocusDay {
+  date: string; // YYYY-MM-DD
+  minutes: number;
+}
+
 export interface AppState {
   onboarded: boolean;
   ledger: Ledger;
   phase_progress: string | null;
   focus: Focus;
+  week: FocusDay[];
 }

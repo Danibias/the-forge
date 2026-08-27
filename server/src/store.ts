@@ -125,6 +125,19 @@ export function writeLedger(ledger: Ledger, note: string): void {
   git(['commit', '--quiet', '--allow-empty-message', '-m', note]);
 }
 
+/**
+ * Calendar day in local time, as YYYY-MM-DD. `Date#toISOString` reports UTC,
+ * which shifts the date by one for any timezone ahead of UTC — local
+ * midnight Monday becomes "Sunday" once converted. Every day-boundary
+ * calculation here needs the day the clock on the wall actually shows.
+ */
+function localDateString(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function readFocus(): FocusEntry[] {
   if (!fs.existsSync(FOCUS_PATH)) return [];
   try {
@@ -143,10 +156,44 @@ export function logFocus(kind: 'focus' | 'break', minutes: number): void {
 
 /** Today's totals. Completed focus blocks only — breaks are not the work (§7.1). */
 export function focusToday(): FocusToday {
-  const today = new Date().toISOString().slice(0, 10);
-  const todays = readFocus().filter((e) => e.kind === 'focus' && e.at.slice(0, 10) === today);
+  const today = localDateString(new Date());
+  const todays = readFocus().filter(
+    (e) => e.kind === 'focus' && localDateString(new Date(e.at)) === today,
+  );
   return {
     minutes: todays.reduce((sum, e) => sum + e.minutes, 0),
     pomodoros: todays.length,
   };
+}
+
+export interface FocusDay {
+  date: string; // YYYY-MM-DD
+  minutes: number;
+}
+
+/** Monday of the current week, local time, at midnight. */
+function startOfWeek(from: Date): Date {
+  const d = new Date(from);
+  const day = d.getDay(); // 0 = Sunday .. 6 = Saturday
+  const sinceMonday = day === 0 ? 6 : day - 1;
+  d.setDate(d.getDate() - sinceMonday);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/** Monday through Saturday of the current week — the streak block's data. */
+export function focusWeek(): FocusDay[] {
+  const monday = startOfWeek(new Date());
+  const entries = readFocus().filter((e) => e.kind === 'focus');
+  const days: FocusDay[] = [];
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const date = localDateString(d);
+    const minutes = entries
+      .filter((e) => localDateString(new Date(e.at)) === date)
+      .reduce((sum, e) => sum + e.minutes, 0);
+    days.push({ date, minutes });
+  }
+  return days;
 }

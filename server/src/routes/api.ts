@@ -1,6 +1,6 @@
 import express from 'express';
 import { isOnboarded, phaseProgress } from '../ledger.js';
-import { focusToday, logFocus, readLedger, LedgerCorrupt } from '../store.js';
+import { focusToday, focusWeek, logFocus, readLedger, LedgerCorrupt } from '../store.js';
 
 export const api = express.Router();
 
@@ -17,6 +17,7 @@ api.get('/state', (_req, res) => {
       onboarded: isOnboarded(ledger),
       phase_progress: phaseProgress(ledger),
       focus: focusToday(),
+      week: focusWeek(),
     });
   } catch (error) {
     if (error instanceof LedgerCorrupt) {
@@ -42,5 +43,5 @@ api.post('/focus', (req, res) => {
     return;
   }
   logFocus(kind, minutes);
-  res.json({ focus: focusToday() });
+  res.json({ focus: focusToday(), week: focusWeek() });
 });

@@ -10,6 +10,8 @@
   --accent-soft: #241c10;
   --ok: #6fbf8a;
   --warn: #e07a5f;
+  --long-break: #5b93d9;
+  --long-break-soft: #131c26;
   --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
   --serif: ui-serif, Charter, Georgia, 'Times New Roman', serif;
@@ -90,11 +92,17 @@ code {
 /* ------------------------------------------------------------- layout */
 
 /* One surface now: the conversation lives in the terminal, this is the board
-   the learner keeps open beside it. */
+   the learner keeps open beside it. Fixed to the viewport height — nothing
+   here should make the whole page scroll; overflow is handled per-panel. */
 .app {
-  max-width: 940px;
+  max-width: 1320px;
+  height: 100vh;
+  height: 100dvh;
   margin: 0 auto;
-  padding: 28px 20px 72px;
+  padding: 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .cold-open {
@@ -130,20 +138,72 @@ code {
 
 /* ---------------------------------------------------------- dashboard */
 
+/* The dashboard fills whatever height .app gives it; the pickup banner
+   takes its natural height and the board below claims the rest. */
+.dashboard {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Read cold, possibly weeks later — full width, above everything (§8.7). */
 .dashboard .pickup {
+  flex: 0 0 auto;
   margin-bottom: 14px;
 }
 
-/* Columns rather than grid: card heights vary a lot, and a row-aligned grid
-   leaves a void under every short card. */
-.cards {
-  columns: 3 280px;
-  column-gap: 14px;
+/* Two side panels flank the wins list, which is the main screen. Each
+   panel scrolls independently so the layout never grows past 100vh. */
+.board {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 280px;
+  gap: 14px;
 }
-.cards .card {
+.panel {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.panel-main {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 980px) {
+  .app {
+    height: auto;
+    overflow: visible;
+  }
+  .dashboard {
+    min-height: 0;
+  }
+  .board {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .panel {
+    height: auto;
+    overflow-y: visible;
+  }
+  .panel-main {
+    height: auto;
+    order: -1;
+  }
+}
+
+.card {
   break-inside: avoid;
-  margin-bottom: 14px;
 }
 
 .card {
@@ -344,6 +404,133 @@ ul.criteria li.met .box {
   background: var(--ok);
 }
 
+/* One color per stage — active, short break, long break — so the state
+   reads at a glance without parsing the clock text. */
+.timer {
+  border-left: 3px solid var(--rule);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.timer.stage-focus {
+  border-left-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent-soft), var(--surface) 65%);
+}
+.timer.stage-short-break {
+  border-left-color: var(--ok);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ok) 12%, var(--surface)),
+    var(--surface) 65%
+  );
+}
+.timer.stage-long-break {
+  border-left-color: var(--long-break);
+  background: linear-gradient(180deg, var(--long-break-soft), var(--surface) 65%);
+}
+
+/* ------------------------------------------------------------- streak */
+
+.streak-days {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 2px;
+}
+.streak-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.streak-bar {
+  position: relative;
+  width: 100%;
+  height: 64px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.streak-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  background: var(--muted);
+  transition: height 0.3s ease;
+}
+.streak-day.met .streak-fill {
+  background: var(--ok);
+}
+.streak-day.short .streak-fill {
+  background: var(--warn);
+}
+.streak-day.today .streak-bar {
+  border-color: var(--accent);
+}
+.streak-day.future .streak-bar {
+  opacity: 0.5;
+}
+/* The 1.5h floor, marked as a line across the bar so a fill's relation to
+   the target is visible, not just its raw height. */
+.streak-min {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.streak-hours {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.streak-day.future .streak-hours {
+  color: var(--muted);
+}
+.streak-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.streak-day.today .streak-label {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------- gate banner */
+
+.gate-banner {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.gate-banner p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.gate-banner.warn p {
+  color: var(--warn);
+}
+.gate-actions {
+  display: flex;
+  gap: 8px;
+}
+.gate-banner.closed {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.gate-banner.closed p {
+  margin: 0;
+  color: var(--muted);
+}
+.gate-banner.closed.warn p {
+  color: var(--warn);
+}
+
 .timer .clock {
   font-family: var(--mono);
   font-size: 34px;
@@ -352,8 +539,14 @@ ul.criteria li.met .box {
   text-align: center;
   margin: 6px 0 12px;
 }
-.timer .clock.break {
-  color: var(--muted);
+.timer .clock.focus {
+  color: var(--accent);
+}
+.timer .clock.short-break {
+  color: var(--ok);
+}
+.timer .clock.long-break {
+  color: var(--long-break);
 }
 .timer-actions {
   display: flex;
@@ -385,6 +578,58 @@ ul.plain li::before {
 }
 .wins ul li {
   color: var(--ink);
+}
+
+/* The main screen: the running record of what's actually been proven.
+   Fixed height (from .panel-main), paginated rather than scrolled — the
+   list never grows past what the card can show. */
+.wins-main {
+  padding: 24px 26px;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.wins-main h3 {
+  flex: 0 0 auto;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.wins-main ul {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.wins-main ul li {
+  font-size: 14.5px;
+  line-height: 1.55;
+  padding-left: 20px;
+  margin-bottom: 14px;
+}
+.wins-main ul li::before {
+  font-size: 18px;
+  line-height: 1;
+  top: -1px;
+}
+.wins-main .empty {
+  flex: 1;
+}
+
+.pagination {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+.pagination .page-indicator {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .goal p {

@@ -1,4 +1,4 @@
-import type { AppState, Focus, Ledger } from './types';
+import type { AppState, Focus, FocusDay, Ledger } from './types';
 
 async function json<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -17,7 +17,7 @@ export const getState = () => json<AppState>('/api/state');
 export const getLedger = () => json<{ ledger: Ledger; focus: Focus }>('/api/ledger');
 
 export const logFocus = (kind: 'focus' | 'break', minutes: number) =>
-  json<{ focus: Focus }>('/api/focus', {
+  json<{ focus: Focus; week: FocusDay[] }>('/api/focus', {
     method: 'POST',
     body: JSON.stringify({ kind, minutes }),
   });
