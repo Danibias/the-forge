@@ -307,4 +307,4 @@ Everything else is §7 as written.
 - To undo a bad session: `git -C ~/.claude/forge log`, then revert. To start over,
   delete the directory.
 - The API-backed implementation — chat UI, SSE, `update_ledger` as a real tool — is
-  preserved on the `main` branch's first commit if you ever want it back.
+  preserved at this repo's first commit (`e12301c`) if you ever want it back.
