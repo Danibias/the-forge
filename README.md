@@ -169,6 +169,69 @@ the learner rather than papering over them:
   gates — which are the entire product. If you are running locally, verify it can
   still refuse to advance a phase before trusting it with a year.
 
+## Comparing data across learners
+
+§3.5 already says what the record is for: "this record diagnoses the *curriculum*,
+not the learner." Read across one learner it tells you to change that learner's
+plan. Read across several it tells you to change the plan.
+
+```bash
+forge-ledger export "gpt-5"      # or whichever model they ran it on
+forge-ledger export > report.json
+```
+
+The notice goes to stderr and the payload to stdout, so redirecting gives a clean
+file while the person still reads what is in it.
+
+**What it withholds, automatically:** `learner`, `goal`, `constraint`, `project`,
+`metaphor_domain`, `wins`, `open_loops`, `next_session`, `last_active`. Those
+describe the person rather than the programme — `constraint` in particular tends
+to hold money, visa status, or a job situation. `capstones[].choice`,
+`training_room.targeting` and each lab's problem statement go too, for the same
+reason.
+
+**What it keeps** is the signal: stalls with the rung that resolved them,
+demotions, recurring misconceptions, retired metaphors, sessions and hours per
+phase, capstone outcomes with `plan_vs_built`, the lab verdict mix, and every
+concept as level-against-ceiling with `last_seen` converted to a distance rather
+than a session number.
+
+**On a `chat` runtime** there is no CLI, so ask the model for it — the prompt
+carries the same field list and the same withholding rules. It is told to produce
+this only when asked, and never to suggest it.
+
+### The part that is not a technical problem
+
+A ledger is somebody's private record of everything they got wrong for a year.
+Collecting it is a consent question before it is an engineering one, and the
+design here answers it in one direction only: **`export` writes to stdout and
+nothing else.** There is no endpoint, no key, no upload. Someone runs it, reads
+it, and sends it if they want to — or doesn't.
+
+If you ask people for this, ask once, say what you will do with it, and take
+silence as no. Anonymised comparison across a handful of consenting learners is
+worth far more than a larger pile collected quietly, and the second kind is not
+worth having at all.
+
+### What to actually compare
+
+- **Stalls, by rung.** §3.5 says it outright: if rung 5 keeps resolving stalls
+  the plan is outrunning its foundations; if rung 3 keeps resolving them the
+  examples are too big. Across learners, a rung that dominates is a curriculum
+  defect, not a run of unlucky people.
+- **Misconceptions that recur across learners.** The strongest signal in the
+  file. A wrong model two strangers both arrive at is a §3.1 metaphor doing
+  damage, and it is fixable in one edit.
+- **Where phases actually end.** Sessions and hours per phase against §5.4's
+  estimates. Estimates written by one person for one learner drift; this is how
+  you find out by how much.
+- **Capstone `plan_vs_built`.** §5.9 says the "could have foreseen" count should
+  shrink over the year. Whether it does, across learners, is the closest thing
+  this programme has to an outcome measure.
+- **Runtime and model.** Held so you can tell a curriculum problem from a model
+  that stopped following the spec — the difference matters and is invisible
+  without it.
+
 ## How it is put together
 
 ```
@@ -178,7 +241,8 @@ server/
   prompts/skill-frontmatter.md     the Claude Code skill's name/description
   src/ledger.ts                    §7 types, patch semantics, §6 decay
   src/validate.ts                  value-shape schema — the tool schema, in code
-  src/cli.ts                       forge-ledger: show / patch
+  src/cli.ts                       forge-ledger: show / patch / export
+  src/export.ts                    the shareable subset — personal fields withheld
   src/store.ts                     atomic writes, git history, safe reads
   src/render.ts                    the ledger as YAML, in §7's key order
   src/routes/api.ts                /state /ledger /focus

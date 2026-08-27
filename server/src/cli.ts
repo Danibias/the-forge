@@ -12,6 +12,7 @@
  *   forge-ledger show                 read the ledger (YAML, §7 order)
  *   forge-ledger patch '<json>'       validate, apply, commit
  *   echo '<json>' | forge-ledger patch
+ *   forge-ledger export               curriculum signal, personal fields withheld
  */
 
 import fs from 'node:fs';
@@ -19,12 +20,14 @@ import { applyUpdate } from './ledger.js';
 import { focusToday, readLedger, writeLedger, LedgerCorrupt } from './store.js';
 import { renderLedger } from './render.js';
 import { validatePatch } from './validate.js';
+import { buildExport, exportNotice } from './export.js';
 
 const USAGE = `forge-ledger — read and write the apprenticeship ledger
 
   forge-ledger show               print the ledger (YAML, §7 order)
   forge-ledger show --json        print the raw stored JSON
   forge-ledger patch '<json>'     apply a patch; reads stdin if no argument
+  forge-ledger export [model]     print shareable curriculum data (nothing is sent)
 
 Patch semantics (unchanged from §7):
   - send only the fields that changed
@@ -100,6 +103,13 @@ function main(): void {
     const updated = applyUpdate(ledger, patch);
     writeLedger(updated, `session ${updated.sessions}: ${fields.join(', ')}`);
     process.stdout.write(`ledger updated (${fields.join(', ')})\n`);
+    return;
+  }
+
+  if (command === 'export') {
+    const model = rest.filter((a) => !a.startsWith('-')).join(' ').trim() || 'unspecified';
+    process.stderr.write(exportNotice());
+    process.stdout.write(`${JSON.stringify(buildExport(ledger, model), null, 2)}\n`);
     return;
   }
 
