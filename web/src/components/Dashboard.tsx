@@ -58,6 +58,9 @@ export function Dashboard({
             {ledger.next_session.warmup && (
               <p className="meta">warmup · {ledger.next_session.warmup}</p>
             )}
+            {ledger.next_session.when && (
+              <p className="meta">next · {ledger.next_session.when}</p>
+            )}
           </>
         ) : (
           <p className="empty">

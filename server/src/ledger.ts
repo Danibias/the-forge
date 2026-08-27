@@ -78,6 +78,8 @@ export interface NextSession {
   target: string | null;
   first_action: string | null;
   warmup: string | null;
+  /** When they said they can next sit down. Pacing input, never a deadline (§1). */
+  when: string | null;
 }
 
 export interface Ledger {
@@ -164,7 +166,7 @@ export function emptyLedger(): Ledger {
     last_session_mode: null,
     labs: [],
     last_active: null,
-    next_session: { target: null, first_action: null, warmup: null },
+    next_session: { target: null, first_action: null, warmup: null, when: null },
   };
 }
 

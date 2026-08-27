@@ -57,7 +57,12 @@ export interface Ledger {
   last_session_mode: string | null;
   labs: { problem: string; verdict: string; posed_by?: string; spike_deleted?: boolean }[];
   last_active: string | null;
-  next_session: { target: string | null; first_action: string | null; warmup: string | null };
+  next_session: {
+    target: string | null;
+    first_action: string | null;
+    warmup: string | null;
+    when: string | null;
+  };
 }
 
 export interface Focus {

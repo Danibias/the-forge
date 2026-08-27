@@ -190,15 +190,16 @@ const CHECKS: Record<string, (errs: Errors, key: string, v: unknown) => void> = 
     }),
 
   next_session: (e, k, v) => {
+    // `when` joins target/first_action/warmup below; all four are nullable strings.
     if (!isObject(v)) {
       e.push(`${k}: expected an object, got ${kind(v)}`);
       return;
     }
-    for (const field of ['target', 'first_action', 'warmup']) {
+    for (const field of ['target', 'first_action', 'warmup', 'when']) {
       if (field in v) nullableString(e, `${k}.${field}`, v[field]);
     }
     for (const field of Object.keys(v)) {
-      if (!['target', 'first_action', 'warmup'].includes(field)) {
+      if (!['target', 'first_action', 'warmup', 'when'].includes(field)) {
         e.push(`${k}.${field}: not a field of next_session`);
       }
     }
