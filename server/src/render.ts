@@ -20,6 +20,7 @@ export function renderLedger(ledger: Ledger, focus: FocusToday): string {
     project: ledger.project,
     metaphor_domain: ledger.metaphor_domain,
     started: ledger.started,
+    runtime: ledger.runtime ?? 'unrecorded — establish it (§1.1) and write it',
     sessions: ledger.sessions,
     hours_logged: ledger.hours_logged,
     track: ledger.track,

@@ -10,6 +10,16 @@
  *     render the drop without parsing prose.
  */
 
+/**
+ * Which harness Forge is running in. It decides what can be assessed (§1.1) and
+ * how the ledger moves, so it is recorded rather than re-guessed every session.
+ *
+ *   agentic+hooks — shell, files, and a pre-write hook guarding the ledger
+ *   agentic       — shell and files, no hook; the guard is the file mode instead
+ *   chat          — text only; the learner carries the ledger by hand
+ */
+export type Runtime = 'agentic+hooks' | 'agentic' | 'chat';
+
 export type Ceiling = 3 | 4 | 5 | 'exposure';
 
 export interface ConceptEntry {
@@ -77,6 +87,7 @@ export interface Ledger {
   project: string | null;
   metaphor_domain: string | null;
   started: string | null;
+  runtime: Runtime | null;
   sessions: number;
   hours_logged: number;
 
@@ -119,6 +130,7 @@ export function emptyLedger(): Ledger {
     project: null,
     metaphor_domain: null,
     started: null,
+    runtime: null,
     sessions: 0,
     hours_logged: 0,
     track: null,

@@ -51,10 +51,23 @@ function ensureRepo(): void {
   git(['config', 'user.email', 'forge@localhost']);
 }
 
+/**
+ * Atomic, and mode-preserving. The second part matters where no pre-write hook
+ * exists: `chmod 444 ledger.json` makes a naive in-place Edit/Write fail with
+ * EACCES while this rename still lands, which is the portable substitute for the
+ * hook. Recreating the temp file at the default 0644 would silently disarm that
+ * guard on the first write.
+ */
 function writeAtomic(file: string, contents: string): void {
   ensureHome();
+  let mode = 0o644;
+  try {
+    mode = fs.statSync(file).mode & 0o777;
+  } catch {
+    // No existing file — first write takes the default.
+  }
   const tmp = `${file}.${process.pid}.tmp`;
-  const fd = fs.openSync(tmp, 'w');
+  const fd = fs.openSync(tmp, 'w', mode);
   try {
     fs.writeFileSync(fd, contents);
     fs.fsyncSync(fd);

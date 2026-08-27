@@ -17,6 +17,7 @@ import type { Ledger } from './ledger.js';
 type Errors = string[];
 
 const CEILINGS = [3, 4, 5, 'exposure'] as const;
+const RUNTIMES = ['agentic+hooks', 'agentic', 'chat'] as const;
 const CAPSTONE_STATUS = ['not started', 'in progress', 'passed', 'failed'] as const;
 const DESIGN_PACK = ['written before', 'revised after', 'both', 'missing'] as const;
 const LAB_VERDICT = ['feasible', 'with changes', 'not feasible', 'unknown'] as const;
@@ -100,6 +101,10 @@ const CHECKS: Record<string, (errs: Errors, key: string, v: unknown) => void> = 
   project: nullableString,
   metaphor_domain: nullableString,
   started: nullableString,
+  runtime: (e, k, v) => {
+    if (v === null) return;
+    oneOf(e, k, v, RUNTIMES);
+  },
   track: nullableString,
   week: nullableString,
   next_consolidation: nullableString,
