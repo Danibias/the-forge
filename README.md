@@ -176,8 +176,9 @@ not the learner." Read across one learner it tells you to change that learner's
 plan. Read across several it tells you to change the plan.
 
 ```bash
-forge-ledger export "gpt-5"      # or whichever model they ran it on
-forge-ledger export > report.json
+forge-ledger export "gpt-5"                  # or whichever model they ran it on
+forge-ledger export --open-loops > mine.json # opt in to sharing loop text
+forge-ledger compare *.json                  # read several exports together
 ```
 
 The notice goes to stderr and the payload to stdout, so redirecting gives a clean
@@ -212,6 +213,34 @@ If you ask people for this, ask once, say what you will do with it, and take
 silence as no. Anonymised comparison across a handful of consenting learners is
 worth far more than a larger pile collected quietly, and the second kind is not
 worth having at all.
+
+### Backlogs
+
+Every export carries a `backlog` block — the outstanding work as numbers rather
+than prose, so it compares across learners without carrying a word anyone wrote:
+open loops and loops per session, unmet exit criteria, concepts below their
+ceiling, **rungs remaining** (the sum of `ceiling - level`, which is the honest
+measure of work left), exposure concepts counted apart because they never exit
+rotation, decay checks due, capstones outstanding, and whether a training room is
+open.
+
+The *text* of `open_loops` is withheld unless the learner passes `--open-loops`.
+It is free text about their own project, so the shape of the backlog always ships
+and the contents never do by default.
+
+`forge-ledger compare a.json b.json ...` reads several exports and prints:
+progress side by side, the backlog table, stalls grouped by the §3.5 rung that
+resolved them, misconceptions appearing in more than one learner, and the spread
+of sessions on reaching each phase. It flags a rung that resolves more than 40%
+of stalls, with what that means — rung 5 dominating says the plan outruns its
+foundations, rung 1–3 says the examples are too big.
+
+Two honest limits. **Rungs remaining only counts concepts already in `active`**,
+so it measures the current phase's backlog, not the whole programme's — a learner
+in Phase 1 and one in Phase 6 are not comparable on it directly. And
+**misconception matching is word overlap on free text**, so it is conservative: a
+hit is a strong signal, a miss is no information, and the same wrong model
+written in two languages will not pair up. The report says so where it prints.
 
 ### What to actually compare
 

@@ -13,6 +13,7 @@
  *   forge-ledger patch '<json>'       validate, apply, commit
  *   echo '<json>' | forge-ledger patch
  *   forge-ledger export               curriculum signal, personal fields withheld
+ *   forge-ledger compare <file...>    several exports, read together
  */
 
 import fs from 'node:fs';
@@ -21,6 +22,7 @@ import { focusToday, readLedger, writeLedger, LedgerCorrupt } from './store.js';
 import { renderLedger } from './render.js';
 import { validatePatch } from './validate.js';
 import { buildExport, exportNotice } from './export.js';
+import { compareReport, loadExports } from './compare.js';
 
 const USAGE = `forge-ledger — read and write the apprenticeship ledger
 
@@ -28,6 +30,8 @@ const USAGE = `forge-ledger — read and write the apprenticeship ledger
   forge-ledger show --json        print the raw stored JSON
   forge-ledger patch '<json>'     apply a patch; reads stdin if no argument
   forge-ledger export [model]     print shareable curriculum data (nothing is sent)
+      --open-loops                include the text of open loops, not just the count
+  forge-ledger compare <file...>  read several exports together
 
 Patch semantics (unchanged from §7):
   - send only the fields that changed
@@ -56,6 +60,17 @@ function main(): void {
 
   if (!command || command === '--help' || command === '-h') {
     process.stdout.write(USAGE);
+    return;
+  }
+
+  if (command === 'compare') {
+    const files = rest.filter((a) => !a.startsWith('-'));
+    if (files.length === 0) fail('compare: give me at least one export file.');
+    try {
+      process.stdout.write(`${compareReport(loadExports(files))}\n`);
+    } catch (error) {
+      fail(error instanceof Error ? error.message : String(error));
+    }
     return;
   }
 
@@ -107,9 +122,10 @@ function main(): void {
   }
 
   if (command === 'export') {
+    const openLoops = rest.includes('--open-loops');
     const model = rest.filter((a) => !a.startsWith('-')).join(' ').trim() || 'unspecified';
-    process.stderr.write(exportNotice());
-    process.stdout.write(`${JSON.stringify(buildExport(ledger, model), null, 2)}\n`);
+    process.stderr.write(exportNotice(openLoops));
+    process.stdout.write(`${JSON.stringify(buildExport(ledger, model, openLoops), null, 2)}\n`);
     return;
   }
 

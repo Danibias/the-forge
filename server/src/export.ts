@@ -17,7 +17,7 @@
  * deliberate act by the person whose ledger it is.
  */
 
-import type { Ledger } from './ledger.js';
+import { decaying, type Ledger } from './ledger.js';
 
 /** Fields dropped outright: they describe the person, not the programme. */
 const WITHHELD = [
@@ -27,16 +27,40 @@ const WITHHELD = [
   'project',
   'metaphor_domain',
   'wins',
-  'open_loops',
   'next_session',
   'last_active',
 ] as const;
+
+/**
+ * Open loops are a backlog, which makes them worth comparing — and they are also
+ * free text about someone's own project, which makes them theirs. So the shape
+ * of the backlog always ships and the text of it never does unless asked for.
+ */
+const OPT_IN = 'open_loops (text)';
 
 /**
  * Fields kept because they are the signal, but which are free text the learner
  * wrote — so they get named in the header for review before anything is sent.
  */
 const REVIEW = ['phase', 'concept names', 'misconceptions', 'stalls', 'demotions'] as const;
+
+/**
+ * What is still outstanding, as numbers rather than prose. Comparable across
+ * learners without carrying a word anyone wrote.
+ */
+export interface Backlog {
+  open_loops: number;
+  open_loops_per_session: number | null;
+  exit_criteria_unmet: number;
+  concepts_below_ceiling: number;
+  /** Sum of (ceiling - level) over ceilinged concepts: the work actually left. */
+  rungs_remaining: number;
+  /** `exposure` concepts never exit rotation, so they are counted apart. */
+  exposure_concepts: number;
+  decay_due: number;
+  capstones_outstanding: number;
+  training_room_open: boolean;
+}
 
 export interface ForgeExport {
   forge_export: 1;
@@ -61,11 +85,34 @@ export interface ForgeExport {
   capstones: { phase: number; status: string; design_pack: string | null; plan_vs_built: string | null }[];
   training_room: { progress: number; consecutive_fails: number } | null;
   labs: { verdict: string; posed_by: string; spike_deleted: boolean }[];
+  backlog: Backlog;
+  open_loops?: string[];
   pathways: { name: string; opened_session: number | null }[];
   last_session_mode: string | null;
 }
 
-export function buildExport(ledger: Ledger, model: string): ForgeExport {
+function buildBacklog(ledger: Ledger): Backlog {
+  const ceilinged = ledger.active.filter((c) => typeof c.ceiling === 'number');
+  return {
+    open_loops: ledger.open_loops.length,
+    open_loops_per_session:
+      ledger.sessions > 0
+        ? Number((ledger.open_loops.length / ledger.sessions).toFixed(2))
+        : null,
+    exit_criteria_unmet: ledger.exit_criteria.filter((c) => !c.met).length,
+    concepts_below_ceiling: ceilinged.filter((c) => c.level < (c.ceiling as number)).length,
+    rungs_remaining: ceilinged.reduce(
+      (sum, c) => sum + Math.max(0, (c.ceiling as number) - c.level),
+      0,
+    ),
+    exposure_concepts: ledger.active.length - ceilinged.length,
+    decay_due: decaying(ledger).length,
+    capstones_outstanding: ledger.capstones.filter((c) => c.status !== 'passed').length,
+    training_room_open: ledger.training_room !== null,
+  };
+}
+
+export function buildExport(ledger: Ledger, model: string, openLoops = false): ForgeExport {
   return {
     forge_export: 1,
     generated: new Date().toISOString().slice(0, 10),
@@ -119,16 +166,21 @@ export function buildExport(ledger: Ledger, model: string): ForgeExport {
     })),
     pathways: ledger.pathways.map((p) => ({ name: p.name, opened_session: p.opened_session })),
     last_session_mode: ledger.last_session_mode,
+    backlog: buildBacklog(ledger),
+    ...(openLoops ? { open_loops: ledger.open_loops } : {}),
   };
 }
 
 /** Printed to stderr, so it is read by a person and not captured by a pipe. */
-export function exportNotice(): string {
+export function exportNotice(openLoops: boolean): string {
   return [
     'This is your data and sending it is entirely your choice.',
     '',
     `Withheld automatically: ${WITHHELD.join(', ')}.`,
     `Kept, and written by you — read these before sending: ${REVIEW.join(', ')}.`,
+    openLoops
+      ? `Included because you passed --open-loops: ${OPT_IN}.`
+      : `Withheld unless you pass --open-loops: ${OPT_IN}. The backlog counts ship either way.`,
     '',
     'Nothing has been transmitted. This was printed, not uploaded.',
     '',
