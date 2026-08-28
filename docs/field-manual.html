@@ -168,6 +168,12 @@ a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radi
   .steps>li::before{left:-34px}
 }
 
+/* ---- direct link line ---- */
+.cta-line{font-family:var(--sans); font-size:15.5px; margin:0 0 10px}
+.cta-line a{font-family:var(--mono); font-size:14px; font-weight:600; text-decoration:none;
+  border-bottom:1px solid var(--accent); padding-bottom:1px}
+.cta-line a:hover{background:var(--accent-soft)}
+
 /* ---- referral banner ---- */
 .banner{margin:64px 0 0; padding:20px 22px; border:1px solid var(--accent);
   border-radius:8px; background:var(--accent-soft); max-width:66ch}
@@ -280,7 +286,8 @@ a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radi
 <ol class="steps">
 <li>
 <h3>Get the prompt</h3>
-<p>Open <code>FORGE-PROMPT.md</code> from the repo — the whole file, roughly 95 KB of text. You do not need to understand it. You need to copy it.</p>
+<p class="cta-line"><a href="https://raw.githubusercontent.com/Danibias/the-forge/master/FORGE-PROMPT.md">FORGE-PROMPT.md</a> — open it, select all, copy.</p>
+<p>The whole file, roughly 95 KB of plain text. You do not need to understand a word of it; you need to copy it. It lives in <a href="https://github.com/Danibias/the-forge">the-forge</a> on GitHub, so it is always the current version.</p>
 </li>
 <li>
 <h3>Paste it into your model as the system prompt</h3>
@@ -310,7 +317,8 @@ a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radi
 <ol class="steps">
 <li>
 <h3>Install and build</h3>
-<pre class="cmd"><code>cd ~/projects/the-forge
+<pre class="cmd"><code>git clone https://github.com/Danibias/the-forge ~/projects/the-forge
+cd ~/projects/the-forge
 npm install
 npm run setup</code></pre>
 <p>This builds the ledger CLI, writes <code>FORGE-PROMPT.md</code> at the repo root — the prompt itself, which every tool needs — and puts <code>forge-ledger</code> in <code>~/.local/bin</code>. It also writes a Claude Code skill, which you can ignore if you are not using Claude Code.</p>
@@ -755,7 +763,8 @@ rung 3 — halve the example           1    10%
 <ol class="steps">
 <li>
 <h3>Consigue el prompt</h3>
-<p>Abre <code>FORGE-PROMPT.md</code> del repositorio: el archivo entero, unos 95 KB de texto. No hace falta que lo entiendas. Hace falta que lo copies.</p>
+<p class="cta-line"><a href="https://raw.githubusercontent.com/Danibias/the-forge/master/FORGE-PROMPT.md">FORGE-PROMPT.md</a> — ábrelo, selecciona todo, copia.</p>
+<p>El archivo entero, unos 95 KB de texto plano. No hace falta que entiendas ni una palabra; hace falta que lo copies. Vive en <a href="https://github.com/Danibias/the-forge">the-forge</a> en GitHub, así que siempre es la versión actual.</p>
 </li>
 <li>
 <h3>Pégalo en tu modelo como system prompt</h3>
@@ -785,7 +794,8 @@ rung 3 — halve the example           1    10%
 <ol class="steps">
 <li>
 <h3>Instala y compila</h3>
-<pre class="cmd"><code>cd ~/projects/the-forge
+<pre class="cmd"><code>git clone https://github.com/Danibias/the-forge ~/projects/the-forge
+cd ~/projects/the-forge
 npm install
 npm run setup</code></pre>
 <p>Esto compila la CLI del ledger, escribe <code>FORGE-PROMPT.md</code> en la raíz del repositorio —el prompt en sí, que toda herramienta necesita— y deja <code>forge-ledger</code> en <code>~/.local/bin</code>. También escribe un skill de Claude Code, que puedes ignorar si no usas Claude Code.</p>
