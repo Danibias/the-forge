@@ -279,6 +279,9 @@ web/
   src/components/Dashboard.tsx     §7.1's surface
   src/components/ConceptMeter.tsx  level against ceiling
   src/components/Pomodoro.tsx      rhythm, never a deadline
+docs/
+  spec.html                        the §1–§10 spec, typeset — published as an artifact
+  field-manual.html                setup and session guide, English + Spanish
 scripts/
   install-skill.mjs                → SKILL.md (Claude Code) and FORGE-PROMPT.md (everything else)
   install-cli.mjs                  forge-ledger → ~/.local/bin

@@ -1,0 +1,1179 @@
+<title>Forge Field Manual</title>
+<style>
+:root{
+  --ground:#F5F6F8; --surface:#FFFFFF; --ink:#161A20; --muted:#59616E;
+  --rule:#DDE1E7; --rule-soft:#EAEDF1; --accent:#A66A00; --accent-soft:#FDF3E0;
+  --code-bg:#EFF1F4; --warn:#A3352B; --warn-soft:#FBEDEB;
+  --shadow:0 1px 2px rgba(20,26,34,.06);
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --serif:ui-serif,Charter,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1216; --surface:#161A20; --ink:#E4E8EE; --muted:#8F98A6;
+    --rule:#252B34; --rule-soft:#1D222A; --accent:#E5A63C; --accent-soft:#241C10;
+    --code-bg:#1C222A; --warn:#E08678; --warn-soft:#251614;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1216; --surface:#161A20; --ink:#E4E8EE; --muted:#8F98A6;
+  --rule:#252B34; --rule-soft:#1D222A; --accent:#E5A63C; --accent-soft:#241C10;
+  --code-bg:#1C222A; --warn:#E08678; --warn-soft:#251614;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--serif); font-size:17px; line-height:1.62;
+  margin:0; -webkit-font-smoothing:antialiased;
+}
+.wrap{display:grid; grid-template-columns:232px minmax(0,1fr); gap:52px;
+  max-width:1140px; margin:0 auto; padding:0 24px 140px}
+@media (max-width:940px){ .wrap{grid-template-columns:minmax(0,1fr); gap:0} }
+.doc{padding-top:44px; min-width:0}
+
+/* ---- contents rail ---- */
+.rail{position:sticky; top:0; align-self:start; max-height:100vh; overflow-y:auto;
+  padding:44px 0 60px; font-family:var(--sans); font-size:12.5px; line-height:1.4}
+@media (max-width:940px){
+  .rail{position:static; max-height:none; padding:36px 0 24px;
+    border-bottom:1px solid var(--rule); margin-bottom:8px}
+}
+.rail .rl{font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); margin:22px 0 8px; padding-left:2px}
+.rail .rl:first-child{margin-top:0}
+.rail a{display:block; text-decoration:none; color:var(--muted);
+  padding:3px 6px 3px 2px; border-radius:3px}
+.rail a:hover{color:var(--ink); background:var(--rule-soft)}
+.rail a:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+
+/* ---- route continuation pointer ---- */
+.ptr{font-family:var(--sans); font-size:14px; font-weight:600;
+  background:var(--accent-soft); border-left:3px solid var(--accent);
+  border-radius:0 5px 5px 0; padding:12px 16px; margin:22px 0 0}
+.ptr a{text-decoration:none}
+.ptr a:hover{text-decoration:underline}
+
+h1{font-family:var(--sans); font-size:clamp(28px,5vw,40px); line-height:1.12;
+  letter-spacing:-.022em; font-weight:680; margin:0 0 12px; text-wrap:balance}
+.sub{font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 34px}
+h2{scroll-margin-top:20px; font-family:var(--sans); font-size:24px; font-weight:660; line-height:1.2;
+  letter-spacing:-.014em; text-wrap:balance; margin:64px 0 8px;
+  padding-top:22px; border-top:1px solid var(--rule)}
+h3{font-family:var(--sans); font-size:17px; font-weight:640; line-height:1.3;
+  letter-spacing:-.01em; margin:34px 0 10px; text-wrap:balance}
+.eyebrow{font-family:var(--mono); font-size:10px; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 30px}
+p{margin:0 0 16px; max-width:66ch}
+.deck{color:var(--muted); margin:0 0 8px; max-width:66ch}
+strong{font-weight:700}
+em{font-style:italic}
+a{color:var(--accent)}
+ul{margin:0 0 16px; padding-left:21px; max-width:66ch}
+li{margin-bottom:7px}
+li::marker{color:var(--muted); font-family:var(--sans); font-size:.88em}
+code{font-family:var(--mono); font-size:.85em; background:var(--code-bg);
+  padding:1.5px 5px; border-radius:3px; word-break:break-word}
+
+/* ---- status strip ---- */
+.status{display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); border-radius:6px;
+  overflow:hidden; margin:0 0 8px}
+.status div{background:var(--surface); padding:12px 14px}
+.status .n{display:block; font-family:var(--mono); font-size:17px; font-weight:600;
+  font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.status .l{display:block; font-family:var(--sans); font-size:10px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--muted); margin-top:3px}
+.status .n.on{color:var(--accent)}
+.caption{font-family:var(--sans); font-size:12.5px; color:var(--muted); margin:0 0 8px}
+
+/* ---- numbered spine ---- */
+.steps{list-style:none; margin:22px 0 0; padding:0 0 0 46px; max-width:none;
+  border-left:1px solid var(--rule); counter-reset:step}
+.steps>li{position:relative; margin:0 0 30px; padding:0}
+.steps>li::before{counter-increment:step; content:counter(step);
+  position:absolute; left:-46px; top:1px; width:25px; height:25px;
+  display:flex; align-items:center; justify-content:center;
+  transform:translateX(-13px);
+  font-family:var(--mono); font-size:11.5px; font-weight:600;
+  font-variant-numeric:tabular-nums;
+  color:var(--ground); background:var(--accent); border-radius:50%}
+.steps h3{margin:0 0 6px}
+.steps p:last-child,.steps ul:last-child{margin-bottom:0}
+
+/* ---- command blocks ---- */
+pre.cmd{font-family:var(--mono); font-size:12.5px; line-height:1.7;
+  background:var(--surface); border:1px solid var(--rule);
+  border-left:3px solid var(--accent); border-radius:0 5px 5px 0;
+  padding:13px 16px; margin:0 0 16px; overflow-x:auto; box-shadow:var(--shadow)}
+pre.cmd code{background:none; padding:0; font-size:inherit; word-break:normal}
+pre.cmd .c{color:var(--muted)}
+
+/* ---- cards ---- */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:14px; margin:22px 0 0}
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:6px;
+  padding:16px 18px; box-shadow:var(--shadow)}
+.card h3{margin:0 0 7px; font-size:15px}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+.card p,.card ul{font-size:15.5px; line-height:1.55}
+
+/* ---- warn block ---- */
+.warn{background:var(--warn-soft); border:1px solid var(--warn);
+  border-radius:6px; padding:16px 18px; margin:22px 0 0}
+.warn h3{margin:0 0 8px; font-size:15px; color:var(--warn)}
+.warn ul{margin-bottom:0; font-size:15.5px; line-height:1.55}
+.warn li::marker{color:var(--warn)}
+
+/* ---- table ---- */
+.tw{overflow-x:auto; margin:22px 0 0}
+table{border-collapse:collapse; font-family:var(--sans); font-size:14px;
+  line-height:1.5; min-width:100%}
+th{text-align:left; font-weight:640; font-size:10.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--muted); padding:0 18px 9px 0;
+  border-bottom:1.5px solid var(--ink); white-space:nowrap}
+td{padding:11px 18px 11px 0; border-bottom:1px solid var(--rule-soft); vertical-align:top}
+tr td:first-child{font-weight:600}
+td code{font-size:.92em}
+
+/* ---- entry choice ---- */
+.paths{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px; margin:22px 0 0}
+.path{background:var(--surface); border:1px solid var(--rule); border-radius:6px;
+  padding:18px 20px; box-shadow:var(--shadow); display:flex; flex-direction:column}
+.path.here{border-color:var(--accent)}
+.path .tag{font-family:var(--mono); font-size:10px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 8px}
+.path.here .tag{color:var(--accent)}
+.path h3{margin:0 0 8px; font-size:16px}
+.path p{font-size:15.5px; line-height:1.55; margin:0 0 12px}
+.path p:last-child{margin-bottom:0}
+.path .go{margin-top:auto; font-family:var(--sans); font-size:13px; font-weight:600}
+.path .go a{text-decoration:none}
+.path .go a:hover{text-decoration:underline}
+
+/* ---- referral footer ---- */
+.refer{margin:56px 0 0; padding-top:20px; border-top:1px solid var(--rule);
+  font-family:var(--sans); font-size:13.5px; line-height:1.6; color:var(--muted);
+  max-width:66ch}
+.refer a{word-break:break-all}
+
+a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){
+  .steps{padding-left:34px}
+  .steps>li::before{left:-34px}
+}
+
+/* ---- referral banner ---- */
+.banner{margin:64px 0 0; padding:20px 22px; border:1px solid var(--accent);
+  border-radius:8px; background:var(--accent-soft); max-width:66ch}
+.banner .tag{font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 9px}
+.banner .line{font-family:var(--sans); font-size:15px; line-height:1.55;
+  color:var(--ink); margin:0 0 12px; max-width:none}
+.banner .cta{margin:0; max-width:none}
+.banner .cta a{font-family:var(--mono); font-size:14px; font-weight:600;
+  color:var(--accent); text-decoration:none; word-break:break-all}
+.banner .cta a:hover{text-decoration:underline}
+
+/* ---- language toggle ---- */
+.langbar{position:sticky; top:0; z-index:5; display:flex; gap:6px;
+  justify-content:flex-end; align-items:center;
+  padding:10px 0 10px; margin:0 0 -34px;
+  background:linear-gradient(var(--ground) 70%, transparent)}
+.langbar .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--muted); margin-right:4px}
+.langbar button{font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; cursor:pointer;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid var(--rule); background:var(--surface); color:var(--muted)}
+.langbar button:hover{color:var(--ink); border-color:var(--muted)}
+.langbar button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent);
+  color:var(--ground); font-weight:700}
+.langbar button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+[data-lang]{display:none}
+[data-lang].on{display:grid}
+@media (max-width:940px){ [data-lang].on{display:block} }
+</style>
+<div class="langbar">
+  <span class="lbl">Language</span>
+  <button type="button" data-set="en" aria-pressed="true">English</button>
+  <button type="button" data-set="es" aria-pressed="false">Español</button>
+</div>
+<div class="wrap" data-lang="en">
+<nav class="rail">
+<p class="rl">Start here</p>
+<a href="#routes">Two ways in</a>
+<a href="#route-a">Route A — chat window</a>
+<a href="#route-b">Route B — the machinery</a>
+<a href="#route-b2">Route B — wiring your tool</a>
+<p class="rl">Running it</p>
+<a href="#session">A session, start to finish</a>
+<a href="#board">Reading the board</a>
+<a href="#timer">The timer's edges</a>
+<p class="rl">The long game</p>
+<a href="#ledger">The ledger</a>
+<a href="#gate">When a gate locks</a>
+<a href="#return">Coming back after a break</a>
+<a href="#share">Sending your data back</a>
+<p class="rl">Reference</p>
+<a href="#trouble">If something's wrong</a>
+<a href="#tldr">The one-line version</a>
+<a href="#maintainers">For maintainers</a>
+</nav>
+<main class="doc">
+
+
+<h1>Forge Field Manual</h1>
+<p class="sub">How to run the apprenticeship · companion to the §1–§10 spec</p>
+
+<p class="deck">Forge is the mentor. This is the machinery around it: what to run, in what order, and which parts of it are not yours to negotiate with. It assumes nothing about which model you are running, or whether you have ever written a line of code.</p>
+
+<h2 id="routes">Two ways in</h2>
+<p class="deck">Forge is not tied to Claude, and it does not require you to already know how to program. Those two facts give you a choice, and for most people arriving here the first column is the right one.</p>
+
+<div class="paths">
+<div class="path">
+<p class="tag">no install</p>
+<h3>You've never programmed</h3>
+<p>Open any chat model you already have. Paste one file into it. Say "start". That is the entire setup — no terminal, no Node, nothing to install.</p>
+<p class="go"><a href="#route-a">→ Route A, below</a></p>
+</div>
+<div class="path here">
+<p class="tag">full capability</p>
+<h3>You're comfortable in a terminal</h3>
+<p>Clone the repo, run two commands, and the mentor can read your files, run your tests, and see the real error. This is the reference setup, and the only one that can assess debugging.</p>
+<p class="go"><a href="#route-b">→ Route B, below</a></p>
+</div>
+</div>
+
+<h3>What each route can actually do</h3>
+<p>The prompt works out which of three runtimes it is in before it speaks, and records it. This is the part worth reading <em>before</em> you choose, because it is what the choice costs.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Runtime</th><th>What it is</th><th>What you lose</th></tr></thead>
+<tbody>
+<tr><td><code>agentic+hooks</code></td><td>Claude Code with the guard hook installed</td><td>Nothing. This is the reference.</td></tr>
+<tr><td><code>agentic</code></td><td>Any agent with a shell and file access: another CLI, an IDE agent, a local model behind an agent harness</td><td>The enforced write path. Replaced by the file-mode guard in Route B.</td></tr>
+<tr><td><code>chat</code></td><td>A plain chat window with no tools</td><td>File access, the CLI, git history, and any honest read on level 5.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="warn">
+<h3>What you actually give up, stated plainly</h3>
+<ul>
+<li><strong>Chat cannot assess level 5.</strong> "Debugs" means diagnosing a failure the model watched happen. A model that cannot run anything is taking your word for it, and levels only move on observed evidence. The prompt is told to be slower to promote past 4 and to say why — expect that, and don't argue it into a 5.</li>
+<li><strong>Chat has no validation and no history.</strong> No schema check, no atomic write, no git. The ledger is regenerated from scratch each session, and regenerated documents drift — long lists quietly get shorter. Check <code>wins</code> and <code>misconceptions</code> haven't shrunk.</li>
+<li><strong>Chat suspends two rules.</strong> "Never carry your own state" and "never print the ledger in chat" both stop applying, because neither is possible to honour without a CLI. That is the only place the spec gets overridden.</li>
+<li><strong>No dashboard flips §7.1.</strong> "Don't recite what they can see" only holds while you can see it. Without the board the mentor has to tell you where you are, out loud, every session.</li>
+<li><strong>Context length is the real limit, not the brand.</strong> Prompt plus ledger is roughly 25k tokens before the session starts, and it grows all year. A small local model will accept all of it and then silently drop the lesson cycle and the gates — which are the entire product. Before trusting one with a year, check it will still refuse to advance a phase you haven't earned.</li>
+</ul>
+</div>
+
+<h2 id="route-a">Route A — start in a chat window</h2>
+<p class="deck">Three steps. None of them require anything installed.</p>
+
+<ol class="steps">
+<li>
+<h3>Get the prompt</h3>
+<p>Open <code>FORGE-PROMPT.md</code> from the repo — the whole file, roughly 95 KB of text. You do not need to understand it. You need to copy it.</p>
+</li>
+<li>
+<h3>Paste it into your model as the system prompt</h3>
+<p>Anywhere with a long context window works. If there is no "system prompt" box, paste it as your first message instead and then send a second message saying <strong>start</strong>.</p>
+</li>
+<li>
+<h3>Save what it gives you</h3>
+<p>At the end of every session it will print a block of JSON. Save it in a file called <code>ledger.json</code> — anywhere, your desktop is fine. Next session, paste that file in first. That file is your entire progress; without it, session two starts over from nothing.</p>
+<p>Keep the previous two versions beside it as <code>ledger-1.json</code> and <code>ledger-2.json</code>. In this mode there is no undo, and those two files are it.</p>
+</li>
+</ol>
+
+<div class="warn">
+<h3>What you're trading away, and when to stop trading it</h3>
+<ul>
+<li>The mentor cannot run your code, so it cannot watch you debug — and debugging is the top rung of the ladder. It is instructed to be slower to promote you past level 4 and to say why. That is correct behaviour, not the model being difficult.</li>
+<li>There is no validation and no history on your ledger. It is regenerated from scratch each session, and regenerated documents drift — check that your <code>wins</code> list never gets shorter.</li>
+<li><strong>This is temporary and it is meant to be.</strong> Phase 0 teaches you the terminal, Node, npm and git — which is exactly what the full setup needs. At the end of Phase 0 you will be able to do the setup below yourself, and doing it counts as Phase 0 work rather than a chore. The mentor is told to offer it then and not before.</li>
+</ul>
+</div>
+
+<p class="ptr">→ Your setup is done. Continue at <a href="#session">Running a session</a>.</p>
+
+<h2 id="route-b">Route B — part one: the machinery</h2>
+<p class="deck">The same on every tool. It assumes you can already use a terminal — if you cannot yet, take the chat route above and come back at the end of Phase 0.</p>
+
+<ol class="steps">
+<li>
+<h3>Install and build</h3>
+<pre class="cmd"><code>cd ~/projects/the-forge
+npm install
+npm run setup</code></pre>
+<p>This builds the ledger CLI, writes <code>FORGE-PROMPT.md</code> at the repo root — the prompt itself, which every tool needs — and puts <code>forge-ledger</code> in <code>~/.local/bin</code>. It also writes a Claude Code skill, which you can ignore if you are not using Claude Code.</p>
+</li>
+
+<li>
+<h3>Confirm the CLI is reachable</h3>
+<pre class="cmd"><code>which forge-ledger
+<span class="c"># /home/you/.local/bin/forge-ledger</span></code></pre>
+<p>Nothing printed means <code>~/.local/bin</code> is not on your <code>PATH</code>. Add it to your shell profile — without it, the mentor cannot read or write your ledger at all.</p>
+</li>
+
+<li>
+<h3>Protect the ledger</h3>
+<p>A hand-edited ledger fails silently, so something has to make a direct write impossible. Which thing depends on your tool.</p>
+<p><strong>Claude Code</strong> can refuse a write before it happens. Add this to <code>~/.claude/settings.json</code>, merged with whatever is already there:</p>
+<pre class="cmd"><code>"hooks": {
+  "PreToolUse": [{
+    "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+    "hooks": [{
+      "type": "command",
+      "command": "&lt;repo&gt;/scripts/guard-ledger.sh"
+    }]
+  }]
+}</code></pre>
+<p><strong>Everything else</strong> gets the same protection from the filesystem:</p>
+<pre class="cmd"><code>npm run protect-ledger    <span class="c"># chmod 444 ledger.json</span></code></pre>
+<p>A stray edit then fails with <code>EACCES</code> while <code>forge-ledger</code> writes normally, because it replaces the file by renaming a new one over it. Run it once you have a ledger — it has nothing to protect before session one.</p>
+</li>
+
+<li>
+<h3>Verify</h3>
+<pre class="cmd"><code>forge-ledger show</code></pre>
+<p>Your ledger, in §7 order. If it says no ledger exists, your first session runs onboarding.</p>
+</li>
+</ol>
+
+<h2 id="route-b2">Route B — part two: teaching your tool the prompt</h2>
+<p class="deck">Every tool has some way to give a model standing instructions it will follow across a whole conversation. Whatever yours calls it, that is where <code>FORGE-PROMPT.md</code> goes — whole, never summarised.</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>Mechanism</th><th>Tools that work this way</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td>A named skill or command</td><td>Claude Code skills</td><td>Write it to the skill file; invoke it by name</td></tr>
+<tr><td>An instructions file the tool loads by itself</td><td>Codex CLI and others via <code>AGENTS.md</code>; Gemini CLI via <code>GEMINI.md</code>; Cursor and Continue via their rules files</td><td>Put the prompt in that file, or point the file at it</td></tr>
+<tr><td>A system-prompt box or saved persona</td><td>ChatGPT projects and custom instructions; Gemini Gems; Ollama and LM Studio system prompts; any API playground</td><td>Paste the prompt in</td></tr>
+</tbody>
+</table>
+</div>
+<p>Tool conventions move faster than this page does. If a filename here has changed, the shape is what matters: find the thing your tool reads before every message, and put the prompt there.</p>
+
+<h3>On Claude Code — the whole skill, by hand</h3>
+<p>A skill is one Markdown file in a named folder. Nothing more:</p>
+<pre class="cmd"><code>mkdir -p ~/.claude/skills/forge
+<span class="c"># then write ~/.claude/skills/forge/SKILL.md as:</span>
+<span class="c">#   the frontmatter below, a blank line, then all of FORGE-PROMPT.md</span></code></pre>
+<pre class="cmd"><code>---
+name: forge
+description: Run a session of the Forge apprenticeship. Reads the
+  learner's ledger, opens as the spec directs, teaches, and writes
+  back what was demonstrated. Invoke when the learner types /forge.
+---</code></pre>
+<p>The folder name is the command, so <code>skills/forge/</code> gives you <code>/forge</code>. The <code>description</code> is what Claude reads to decide the skill applies, which is why it names the trigger explicitly.</p>
+<p><code>npm run install-skill</code> does exactly this and nothing else — it concatenates the frontmatter and the prompt into that path. Do it by hand once if you want to see there is no magic in it. Restart Claude Code afterwards, or the skill list will not include it.</p>
+
+<h3>On anything else</h3>
+<ul>
+<li>Find your tool's standing-instruction mechanism from the table above.</li>
+<li>Give it <strong>all</strong> of <code>FORGE-PROMPT.md</code>. It is around 95 KB — long, but the gates and the lesson cycle are the product, and a summarised version quietly drops both.</li>
+<li>If the tool loads a file by path, point at the file so it stays in sync when you rebuild. If it wants text, paste it and re-paste after any change.</li>
+</ul>
+<p><strong>Check it took.</strong> Open a session and ask: <em>"which runtime are you in, and how do you know?"</em> A model that has actually loaded the prompt names one of <code>agentic+hooks</code>, <code>agentic</code> or <code>chat</code> and says it tested by running <code>forge-ledger show</code>. Anything vaguer means the prompt did not land, and you are talking to a helpful assistant rather than to Forge.</p>
+
+<p class="ptr">→ Your setup is done. Continue at <a href="#session">Running a session</a>.</p>
+
+<h2 id="session">Running a session, start to finish</h2>
+<p class="deck">The same seven moves every time, whichever hours you keep.</p>
+
+<ol class="steps">
+<li>
+<h3>Open the board first</h3>
+<pre class="cmd"><code>cd ~/projects/the-forge &amp;&amp; npm run dev
+<span class="c"># http://localhost:5173</span></code></pre>
+<p>Read the <strong>Pick up here</strong> card before you read anything else. It was written for exactly this moment — by someone who knew you would arrive with no memory of last time. Do what it says.</p>
+</li>
+
+<li>
+<h3>Open Claude Code in the project you are building</h3>
+<pre class="cmd"><code>cd ~/path/to/your-project
+<span class="c"># then open your agent here — claude, codex, gemini, cursor…</span></code></pre>
+<p>Not in <code>the-forge</code>. On an agentic runtime Forge can read your files and run your tests, and that is most of its value — start it where the work is.</p>
+</li>
+
+<li>
+<h3>Start the session</h3>
+<p>On Claude Code that is <code>/forge</code>. On any other tool it is whatever invokes the standing instructions you set up in part two — often just opening a conversation in the project or persona that holds the prompt, then saying <strong>start</strong>.</p>
+<p>That is the entire prompt. Do not summarise last session, do not paste your ledger, do not explain where you left off. Forge reads the ledger itself before it says a word, and it knows more about your last ten sessions than you do. (The one exception is the chat runtime, which has no way to read a file — there, pasting the ledger <em>is</em> the first move, and Forge will ask.)</p>
+</li>
+
+<li>
+<h3>Start the timer when you actually start</h3>
+<p>Not when you sit down — when the first block begins. Everything the dashboard says about your week depends on this being honest.</p>
+</li>
+
+<li>
+<h3>Work the cycle</h3>
+<p>A session opens with a one-line orientation and a warmup retrieval check on something you haven't touched in a few sessions. Then the block itself. Expect to be asked to predict output before running it, to break something that works, and to explain it back without the metaphor. Those three are where the learning lands; they are also the ones that feel skippable.</p>
+<p>If you are flat, say so. There is a menu — push, consolidate, play, cold check, lab — and choosing <em>consolidate</em> three sessions running is pacing, not slipping.</p>
+</li>
+
+<li>
+<h3>Say when you can come back</h3>
+<p>Forge asks at the close: which days, and roughly what hours. Answer with the truth rather than the plan you wish you kept — "Tuesday and Thursday mornings, Saturday if the week is kind" is a better answer than "most evenings" if most evenings is aspirational.</p>
+<p>It uses this for pacing, not pressure. Nobody is checking whether you showed up, and the number never becomes a deadline (§1: the constraint is not the goal). What it does is stop the plan being sized for a week you do not actually have — the commonest way these programmes fail is a schedule built on hours that were never real.</p>
+<p>If your availability changes, say so at any open. That is a planning conversation, held once, and then dropped.</p>
+</li>
+
+<li>
+<h3>Let Forge close it</h3>
+<p>A session is not over until <code>next_session.first_action</code> is written. If you are about to walk away, say "let's close" and give it a minute. Quitting the terminal mid-session costs you tomorrow's opening move, which is the single most valuable line in the ledger.</p>
+</li>
+</ol>
+
+<h2 id="board">Reading the board</h2>
+<p class="deck">Six numbers, on the dashboard and in every <code>forge-ledger show</code>. This is what they mean before you have any of your own.</p>
+<div class="status">
+  <div><span class="n">—</span><span class="l">sessions</span></div>
+  <div><span class="n">—</span><span class="l">phase</span></div>
+  <div><span class="n">—</span><span class="l">week</span></div>
+  <div><span class="n">—</span><span class="l">at ceiling</span></div>
+  <div><span class="n">—</span><span class="l">exit criteria</span></div>
+  <div><span class="n on">open</span><span class="l">gate</span></div>
+</div>
+<p class="caption">Sessions you have actually run · the phase you are in and its number · where you are on your track, if you chose one · concepts finished at their ceiling · exit criteria demonstrated out of the total · and whether the next phase is reachable or the capstone still blocks it.</p>
+<p>None of these move because time passed. Sessions counts sittings, not days; concepts reach their ceiling on observed evidence; the gate opens on a capstone. A month away changes none of them, which is the point.</p>
+
+<h3>The panels</h3>
+<div class="cards">
+<div class="card">
+<h3>Pick up here</h3>
+<p>The literal next move — "open <code>x.ts</code>, add <code>y</code>." Across the top because it is what you need at minute zero and nothing else is.</p>
+</div>
+<div class="card">
+<h3>Phase and gate</h3>
+<p>Sessions, concepts at ceiling, hours. <strong>Open</strong> means the next phase is reachable; <strong>LOCKED</strong> means a capstone hasn't passed yet.</p>
+</div>
+<div class="card">
+<h3>The week</h3>
+<p>Six bars, Monday to Saturday, each against the 1.5-hour floor. It shows the shape of a week, which a single number cannot.</p>
+</div>
+<div class="card">
+<h3>Exit criteria</h3>
+<p>What you have to <em>demonstrate</em> to finish the phase — tasks, never topics. They are the gate, not a checklist of subjects.</p>
+</div>
+<div class="card">
+<h3>Wins</h3>
+<p>The centre panel and the biggest thing on the page: concrete things you can do now that you couldn't. It grows all year. Six per page.</p>
+</div>
+<div class="card">
+<h3>Concepts</h3>
+<p>Level against ceiling, per concept. A ceiling-3 concept sitting at 3 is <em>done</em>, not neglected — that is what makes the plan finishable.</p>
+</div>
+</div>
+
+<h2 id="timer">The timer holds the session's edges</h2>
+<p class="deck">Twenty-five-minute blocks, five-minute breaks, fifteen after every fourth. Beyond that it enforces three limits, and only the first two are yours to answer.</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>At</th><th>What happens</th><th>Whose call</th></tr></thead>
+<tbody>
+<tr><td>1.5 hours</td><td>Asks whether to keep going. This is the floor a session should clear, so it is also the first point where stopping is a real option.</td><td>Yours</td></tr>
+<tr><td>3 hours</td><td>Asks again.</td><td>Yours</td></tr>
+<tr><td>5 hours</td><td>Closes the day. No question, no override.</td><td>Not yours</td></tr>
+<tr><td>10pm–7am</td><td>Will not start.</td><td>Not yours</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The last two are not productivity theatre. Most people doing this are fitting it around a job, which means a late session borrows from the few hours the plan actually has. And learning that never gets a night to consolidate does not survive the week — sleep is part of the method, not time off from it.</p>
+
+<h2 id="ledger">The ledger</h2>
+<p class="deck">One JSON file under git at <code>~/.claude/forge/ledger.json</code>. Every session leaves a commit.</p>
+
+<pre class="cmd"><code>forge-ledger show                 <span class="c"># your state, readable</span>
+forge-ledger show --json          <span class="c"># the raw shape</span>
+git -C ~/.claude/forge log        <span class="c"># one commit per patch</span>
+git -C ~/.claude/forge show HEAD  <span class="c"># what last session changed</span></code></pre>
+
+<p>To undo a session that recorded something wrong, revert its commit — <code>git -C ~/.claude/forge revert &lt;sha&gt;</code>. To start the whole apprenticeship over, delete the directory. Both are real options and neither is an emergency.</p>
+
+<div class="warn">
+<h3>Never edit <code>ledger.json</code> by hand</h3>
+<ul>
+<li>The hook will stop you, and it is stopping you for a reason: a hand-edit succeeds even when it is wrong, and nothing surfaces the breakage. A ledger that quietly starts lying is worse than one that is missing, because you find out in month seven.</li>
+<li>If Forge itself tries a direct write and gets denied, that is the system working. It will retry through the CLI.</li>
+</ul>
+</div>
+
+<h2 id="gate">When a gate locks</h2>
+<p>A phase locks when its capstone doesn't pass. You haven't failed anything — you've found the part that needs more reps, which is what the step is for.</p>
+<ul>
+<li>A <strong>training room</strong> opens the same session: ten exercises aimed at the one thing that broke, not at the whole phase.</li>
+<li><strong>One exercise per session, maximum.</strong> It is remediation, not a grind.</li>
+<li>Three consecutive failures anywhere in the ramp means the missing piece is <em>underneath</em> this phase, not inside it. Forge stops, goes and finds the prerequisite, and teaches that instead. Let it.</li>
+<li>You exit by passing all ten and then attempting a <em>different</em> capstone option — never the one you failed.</li>
+</ul>
+
+<h2 id="return">Coming back after a break</h2>
+<p class="deck">Absences are expected across a year. What ends programs is not the gap, it's the return.</p>
+<ul>
+<li><strong>Under two weeks</strong> — just resume. No review, and Forge will not mention it.</li>
+<li><strong>Two to eight weeks</strong> — one full session of retrieval before any new content. Expect one or two demotions; they are bookkeeping, not a verdict.</li>
+<li><strong>Over two months</strong> — you re-enter one phase below where you stopped, at its capstone. Pass it and you jump straight back.</li>
+</ul>
+<p>Open exactly as you always do. Don't explain the absence. You will not be asked about it.</p>
+
+<div class="warn">
+<h3>The moves that actually break this</h3>
+<ul>
+<li><strong>Asking Forge to write the code.</strong> It will give you the next smallest hint instead, and that is the product you are paying for. The escape hatch exists — "just show me" — but you then modify what it showed you.</li>
+<li><strong>Skipping break-it and teach-back.</strong> Every tutorial on the internet omits those two. That is the reason tutorials don't work.</li>
+<li><strong>Saying you've got a concept instead of demonstrating it.</strong> Levels only move on observed evidence, and inflating one puts you in a build step you aren't ready for.</li>
+<li><strong>Working past the 5-hour stop or before 7am.</strong> Under pressure the instinct is to cut rest first. That trades the thing being built for the appearance of speed.</li>
+</ul>
+</div>
+
+<h2 id="share">Sending your data back</h2>
+<p class="deck">Entirely optional, and nothing does it automatically. If you never run this command, nothing about your apprenticeship ever leaves your machine.</p>
+<p>The record you build over a year is the best evidence there is for whether the curriculum works — where people get stuck, which explanations mislead, how long phases really take. That evidence is only useful in aggregate, and it is only worth having if it was given.</p>
+<pre class="cmd"><code>forge-ledger export "gpt-5"        <span class="c"># whichever model you used</span>
+forge-ledger export &gt; report.json</code></pre>
+<p>In a chat window with no terminal, ask your model for it — the prompt carries the same field list and the same rules about what to leave out. It will only produce it if you ask; it is instructed never to suggest it.</p>
+<h3>What is left out, without you having to do anything</h3>
+<p>Your name, your goal in your own words, your constraint, your project, your metaphor domain, your wins, your open loops, your next action, and when you were last active. Which capstone you chose, what your training room was targeting, and the text of any Lab problem go too.</p>
+<p>The <strong>constraint</strong> field is the one to notice: it routinely holds money, a visa, or a job situation. It is withheld first and it is never in the file.</p>
+<h3>What stays, and why</h3>
+<p>Where you stalled and which move unstuck you · what got demoted · the misconceptions you worked through · metaphors you outgrew · sessions and hours per phase · capstone outcomes · your concepts as level-against-ceiling. <code>last_seen</code> becomes "sessions ago" rather than a session number, so nothing in the file places you on a calendar.</p>
+<p>Plus a <strong>backlog</strong> block: how many loops are open, how many exit criteria are unmet, how many rungs you still have to climb. Counts only — the <em>text</em> of your open loops is yours and stays out unless you add <code>--open-loops</code>, because it describes your project rather than the course.</p>
+<p>Some of that is text you wrote — phase names, concept names, misconceptions. <strong>Read the file before you send it.</strong> The command prints exactly which fields those are, above the output.</p>
+<div class="warn">
+<h3>How this is allowed to work</h3>
+<ul>
+<li><code>export</code> prints to your screen. There is no endpoint, no key, no upload, and no version of this that sends anything on its own. Running it transmits nothing.</li>
+<li>Sending the file is a separate thing you do on purpose, to a person, once you have read it.</li>
+<li>If someone asks you for it and you would rather not, that is a complete answer and no one should ask twice.</li>
+</ul>
+</div>
+
+<h2 id="trouble">If something's wrong</h2>
+<p class="deck">Grouped by what fails rather than by tool. The first one is the most common on anything that is not Claude Code, and it does not announce itself as an error.</p>
+
+<h3>The mentor isn't behaving like Forge</h3>
+<p>This is the failure that looks like success. You get a helpful, articulate assistant that explains things well — and none of the machinery. Tell-tale signs: it answers instead of asking, it hands you working code, it never mentions a phase or a gate, and it never asked for your ledger.</p>
+<p><strong>Test it directly.</strong> Ask: <em>"which runtime are you in, and how do you know?"</em> A model holding the prompt names <code>agentic+hooks</code>, <code>agentic</code> or <code>chat</code> and says how it checked. Anything vaguer and the prompt is not in context.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>The instructions file isn't being read in this directory</td><td>Most tools load <code>AGENTS.md</code> / <code>GEMINI.md</code> / rules files relative to where you started. Check the file is in <em>this</em> project, not the one you set it up in</td></tr>
+<tr><td>The tool caches instructions at launch</td><td>Restart it. Claude Code will not list a skill added mid-session</td></tr>
+<tr><td>You pasted a summary, or the paste got truncated</td><td><code>FORGE-PROMPT.md</code> is ~95 KB. If what you pasted is much shorter, the gates and the lesson cycle are the parts that went missing</td></tr>
+<tr><td>The conversation got long and pushed it out</td><td>Start a fresh conversation and re-load the prompt. On a small-context model this will keep happening — that is the model, not the setup</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>It keeps writing your code</h3>
+<p>Say so plainly: <em>"don't write it — give me the next smallest hint."</em> The spec is explicit that struggle is the mechanism, and a model that has the prompt will correct itself.</p>
+<p>If it drifts back every session or two, that is instruction-following, not configuration. It is the clearest sign the model you have chosen is not strong enough to run this, and no amount of re-prompting fixes it.</p>
+
+<h3>Every runtime</h3>
+<div class="tw">
+<table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td><code>forge-ledger: command not found</code></td><td><code>~/.local/bin</code> not on <code>PATH</code></td><td>Add it to your shell profile and open a new shell</td></tr>
+<tr><td>You can run <code>forge-ledger</code> but the agent can't</td><td>Agents often run a non-login shell that never reads your profile</td><td>Tell it the absolute path: <code>~/.local/bin/forge-ledger</code></td></tr>
+<tr><td>The model edited <code>ledger.json</code> directly and it worked</td><td>No guard installed — this is the failure the guard exists to prevent</td><td><code>npm run protect-ledger</code>, or install the hook on Claude Code. Then check the file against <code>git -C ~/.claude/forge log</code></td></tr>
+<tr><td>A patch was rejected</td><td>Value shapes didn't match the schema — working as designed</td><td>Nothing. It prints every problem and retries. No partial write happened</td></tr>
+<tr><td>"ledger is not valid JSON"</td><td>An interrupted or hand-edited write</td><td>It recovers from the last commit automatically; check <code>git -C ~/.claude/forge log</code></td></tr>
+<tr><td>Dashboard is empty but <code>forge-ledger show</code> works</td><td>A stale server still bound to port 5174</td><td><code>ss -lptn 'sport = :5174'</code>, kill that pid, <code>npm run dev</code></td></tr>
+<tr><td>A concept you know keeps coming back</td><td>Its ceiling is <code>exposure</code> — outside the ladder by design</td><td>Nothing. Those recur all year on purpose</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Claude Code only</h3>
+<div class="tw">
+<table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td><code>/forge</code> isn't listed</td><td>Skill not installed, or Claude Code started before it was</td><td><code>npm run install-skill</code>, then restart</td></tr>
+<tr><td>A write to <code>ledger.json</code> was denied</td><td>The hook, doing its job</td><td>Nothing. It will retry through the CLI</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Chat runtime only</h3>
+<p>Everything here comes from the same root: you are the storage, and storage that is regenerated each session drifts.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>The ledger it gave back is shorter than the one you pasted</td><td>It regenerated the document and dropped entries — usually from <code>wins</code>, <code>misconceptions</code> or <code>active</code></td><td><strong>Do not save it.</strong> Restore <code>ledger-1.json</code>, paste it again, and ask for the full document with every list intact</td></tr>
+<tr><td>It summarised the ledger to save space</td><td>Explicitly forbidden by the prompt, and models do it anyway</td><td>Same fix. A shortened ledger is a lying ledger and the lie stays invisible for months</td></tr>
+<tr><td>You closed the tab without saving the JSON block</td><td>Nothing wrote it down but you</td><td>Restore <code>ledger-1.json</code> and re-run the session. This is why you keep two spares</td></tr>
+<tr><td>It promoted you to level 5</td><td>It cannot observe debugging without running anything</td><td>Push back and ask it to justify the evidence. The prompt tells it to refuse; if it does not, treat the level as 4</td></tr>
+<tr><td>It stopped enforcing gates late in a long session</td><td>The prompt is being pushed out of context</td><td>Close the session properly, start a new conversation, re-load the prompt, paste the ledger</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Sanity check, any runtime</h3>
+<pre class="cmd"><code>forge-ledger show          <span class="c"># does your state read back?</span>
+git -C ~/.claude/forge log <span class="c"># one commit per session?</span></code></pre>
+<p>If both look right, nothing is broken that matters. Everything else is a setup detail.</p>
+
+<h2 id="tldr">The one-line version</h2>
+<p><code>npm run dev</code>, read the pick-up card, open your tool in your project, start the session, start the timer, and don't quit before it closes.</p>
+
+<h2 id="maintainers">For whoever maintains the curriculum</h2>
+<p class="deck">Everything above is for the person doing the apprenticeship. This last section is not — it is for whoever is changing the plan based on what comes back. If you are here to learn, you are done.</p>
+
+<h3>Comparing what comes back</h3>
+<p>§3.5 already says the record diagnoses the course rather than the learner. This just reads it across several people instead of one.</p>
+<pre class="cmd"><code>forge-ledger compare ana.json luis.json mira.json
+forge-ledger compare *.json</code></pre>
+<p>It takes exports, not ledgers, so nothing personal is ever in the room. Every file is checked for <code>"forge_export": 1</code> and refused otherwise.</p>
+<h3>What it prints</h3>
+<pre class="cmd"><code>BACKLOG
+learner  loops  /sess  unmet  below  rungs  decay  caps  room
+-------  -----  -----  -----  -----  -----  -----  ----  ----
+ana          2   0.33      3      2      3      0     0     -
+luis         5   0.56      3      2      6      0     0     -
+mira         1   0.25      3      2     11      0     0     -
+
+STALLS BY RUNG  (10 across 3)
+rung 5 — check the prerequisite      6    60%
+rung 1 — re-enter the cycle earlier  3    30%
+rung 3 — halve the example           1    10%
+
+  ! rung 5 resolves 60% of stalls: the plan is outrunning its foundations</code></pre>
+<p>Then misconceptions that turned up in more than one learner, and the spread of sessions people had reached each phase by.</p>
+<h3>The three things worth reading</h3>
+<div class="cards">
+<div class="card"><h3>rungs</h3><p>The sum of <code>ceiling − level</code> across a learner's open concepts: the work actually left. It should <em>fall</em> between one person's exports. Rising rungs alongside rising sessions means concepts are arriving faster than they finish.</p></div>
+<div class="card"><h3>The rung warning</h3><p>Fires when one §3.5 rung resolves over 40% of stalls. Rung 5 dominating means the plan outruns its foundations; rungs 1–3 mean the examples are too big. One learner is a bad week — three is a defect.</p></div>
+<div class="card"><h3>Shared misconceptions</h3><p>The highest-value edit available. A wrong model two strangers both arrive at is a metaphor doing damage, and it is fixable in one pass.</p></div>
+</div>
+<div class="warn">
+<h3>Where it will mislead you</h3>
+<ul>
+<li><strong>Rungs only count concepts already in play.</strong> It measures the current phase's backlog, not the whole programme's — someone in Phase 1 and someone in Phase 6 are not comparable on that column.</li>
+<li><strong>Misconception matching is word overlap.</strong> A hit is a strong signal; a miss is <em>no information</em>. Two learners working in different languages will never pair up automatically. Read the full lists.</li>
+<li><strong>Two or three exports tell you almost nothing.</strong> This starts earning its keep around five or six. Until then treat every pattern as a hypothesis, not a finding.</li>
+</ul>
+</div>
+
+<aside class="banner">
+<p class="tag">Why this link is here</p>
+<p class="line">Forge runs on Claude Code. If this made you want to try it, signing up through the link below earns me <strong>£10 in usage credits</strong> — said plainly, so you know why the link is here.</p>
+<p class="cta"><a href="https://claude.ai/referral/wevIwZMCuA">claude.ai/referral/wevIwZMCuA</a></p>
+</aside>
+
+</main>
+</div>
+
+<div class="wrap" data-lang="es">
+<nav class="rail">
+<p class="rl">Empieza aquí</p>
+<a href="#es-routes">Dos formas de entrar</a>
+<a href="#es-route-a">Ruta A — ventana de chat</a>
+<a href="#es-route-b">Ruta B — la maquinaria</a>
+<a href="#es-route-b2">Ruta B — conectar tu herramienta</a>
+<p class="rl">Cómo se usa</p>
+<a href="#es-session">Una sesión, de principio a fin</a>
+<a href="#es-board">Leer el tablero</a>
+<a href="#es-timer">Los límites del temporizador</a>
+<p class="rl">El largo plazo</p>
+<a href="#es-ledger">El ledger</a>
+<a href="#es-gate">Cuando una fase se bloquea</a>
+<a href="#es-return">Volver tras una pausa</a>
+<a href="#es-share">Compartir tus datos</a>
+<p class="rl">Referencia</p>
+<a href="#es-trouble">Si algo va mal</a>
+<a href="#es-tldr">La versión de una línea</a>
+<a href="#es-maintainers">Para quien mantiene el curso</a>
+</nav>
+<main class="doc">
+
+<h1>Manual de campo de Forge</h1>
+<p class="sub">Cómo llevar el aprendizaje · complemento del spec §1–§10</p>
+
+<p class="deck">Forge es el mentor. Esto es la maquinaria a su alrededor: qué ejecutar, en qué orden, y qué partes no son negociables. No asume nada sobre qué modelo usas, ni sobre si has escrito una línea de código alguna vez.</p>
+
+<h2 id="es-routes">Dos formas de entrar</h2>
+<p class="deck">Forge no depende de Claude, y no exige que ya sepas programar. Esas dos cosas te dan una elección, y para la mayoría de quienes llegan aquí la primera columna es la correcta.</p>
+
+<div class="paths">
+<div class="path">
+<p class="tag">sin instalar nada</p>
+<h3>Nunca has programado</h3>
+<p>Abre cualquier modelo de chat que ya tengas. Pega un archivo dentro. Di «empezar». Esa es toda la instalación: sin terminal, sin Node, sin nada que instalar.</p>
+<p class="go"><a href="#es-route-a">→ Ruta A, más abajo</a></p>
+</div>
+<div class="path here">
+<p class="tag">capacidad completa</p>
+<h3>Te manejas en una terminal</h3>
+<p>Clona el repositorio, ejecuta dos comandos, y el mentor podrá leer tus archivos, ejecutar tus tests y ver el error real. Esta es la configuración de referencia, y la única que puede evaluar la depuración.</p>
+<p class="go"><a href="#es-route-b">→ Ruta B, más abajo</a></p>
+</div>
+</div>
+
+<h3>Qué puede hacer realmente cada ruta</h3>
+<p>El prompt averigua en cuál de los tres runtimes está antes de decir nada, y lo registra. Conviene leer esto <em>antes</em> de elegir, porque es lo que cuesta la elección.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Runtime</th><th>Qué es</th><th>Qué pierdes</th></tr></thead>
+<tbody>
+<tr><td><code>agentic+hooks</code></td><td>Claude Code con el hook de protección instalado</td><td>Nada. Es la referencia.</td></tr>
+<tr><td><code>agentic</code></td><td>Cualquier agente con shell y acceso a archivos: otra CLI, un agente de IDE, un modelo local dentro de un agente</td><td>La ruta de escritura protegida. Se sustituye por el guard de permisos en la Ruta B.</td></tr>
+<tr><td><code>chat</code></td><td>Una ventana de chat sin herramientas</td><td>Acceso a archivos, la CLI, el historial de git, y cualquier lectura honesta del nivel 5.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="warn">
+<h3>Lo que estás cediendo, dicho claramente</h3>
+<ul>
+<li><strong>En chat no se puede evaluar el nivel 5.</strong> «Depura» significa diagnosticar un fallo que el modelo vio ocurrir. Un modelo que no puede ejecutar nada te está creyendo a ti, y los niveles solo suben con evidencia observada. El prompt le indica que sea más lento en promover más allá del 4 y que explique por qué. Espéralo, y no lo discutas hasta convertirlo en un 5.</li>
+<li><strong>En chat no hay validación ni historial.</strong> Sin comprobación de esquema, sin escritura atómica, sin git. El ledger se regenera de cero cada sesión, y los documentos regenerados se van desgastando: las listas largas se acortan sin avisar. Comprueba que <code>wins</code> y <code>misconceptions</code> no hayan encogido.</li>
+<li><strong>Chat suspende dos reglas.</strong> «Nunca cargues tú con tu propio estado» y «nunca imprimas el ledger en el chat» dejan de aplicarse, porque ninguna es posible sin una CLI. Es el único punto donde el spec se anula.</li>
+<li><strong>Sin dashboard, la §7.1 se invierte.</strong> «No recites lo que ya pueden ver» solo vale mientras puedas verlo. Sin el tablero, el mentor tiene que decirte dónde estás, en voz alta, cada sesión.</li>
+<li><strong>El límite real es el contexto, no la marca.</strong> El prompt más el ledger rondan los 25k tokens antes de empezar la sesión, y crecen todo el año. Un modelo local pequeño lo aceptará todo y luego descartará en silencio el ciclo de la lección y los gates, que son el producto entero. Antes de confiarle un año, comprueba que siga negándose a avanzar una fase que no te has ganado.</li>
+</ul>
+</div>
+
+<h2 id="es-route-a">Ruta A — empezar en una ventana de chat</h2>
+<p class="deck">Tres pasos. Ninguno requiere tener nada instalado.</p>
+
+<ol class="steps">
+<li>
+<h3>Consigue el prompt</h3>
+<p>Abre <code>FORGE-PROMPT.md</code> del repositorio: el archivo entero, unos 95 KB de texto. No hace falta que lo entiendas. Hace falta que lo copies.</p>
+</li>
+<li>
+<h3>Pégalo en tu modelo como system prompt</h3>
+<p>Sirve cualquier sitio con una ventana de contexto larga. Si no hay casilla de «system prompt», pégalo como primer mensaje y envía un segundo mensaje diciendo <strong>empezar</strong>.</p>
+</li>
+<li>
+<h3>Guarda lo que te devuelva</h3>
+<p>Al final de cada sesión imprimirá un bloque de JSON. Guárdalo en un archivo llamado <code>ledger.json</code>, donde quieras; el escritorio vale. La sesión siguiente, pega ese archivo primero. Ese archivo es todo tu progreso; sin él, la sesión dos empieza de cero.</p>
+<p>Guarda al lado las dos versiones anteriores como <code>ledger-1.json</code> y <code>ledger-2.json</code>. En este modo no hay deshacer, y esos dos archivos son todo lo que tienes.</p>
+</li>
+</ol>
+
+<div class="warn">
+<h3>Qué estás cediendo, y cuándo dejar de cederlo</h3>
+<ul>
+<li>El mentor no puede ejecutar tu código, así que no puede verte depurar, y depurar es el peldaño más alto de la escalera. Tiene instrucciones de ser más lento en promoverte más allá del nivel 4 y de decirte por qué. Eso es comportamiento correcto, no el modelo poniéndose difícil.</li>
+<li>No hay validación ni historial en tu ledger. Se regenera de cero cada sesión, y los documentos regenerados se desgastan: comprueba que tu lista de <code>wins</code> nunca se acorte.</li>
+<li><strong>Esto es temporal y está pensado para serlo.</strong> La Fase 0 te enseña la terminal, Node, npm y git, que es exactamente lo que necesita la instalación completa. Al terminar la Fase 0 podrás hacer tú mismo la instalación de abajo, y hacerlo cuenta como trabajo de la Fase 0, no como un trámite. El mentor tiene instrucciones de ofrecértelo entonces y no antes.</li>
+</ul>
+</div>
+
+<p class="ptr">→ Tu instalación está lista. Sigue en <a href="#es-session">Una sesión, de principio a fin</a>.</p>
+
+<h2 id="es-route-b">Ruta B — parte uno: la maquinaria</h2>
+<p class="deck">Igual en todas las herramientas. Asume que ya sabes usar una terminal; si todavía no, coge la ruta de chat de arriba y vuelve al terminar la Fase 0.</p>
+
+<ol class="steps">
+<li>
+<h3>Instala y compila</h3>
+<pre class="cmd"><code>cd ~/projects/the-forge
+npm install
+npm run setup</code></pre>
+<p>Esto compila la CLI del ledger, escribe <code>FORGE-PROMPT.md</code> en la raíz del repositorio —el prompt en sí, que toda herramienta necesita— y deja <code>forge-ledger</code> en <code>~/.local/bin</code>. También escribe un skill de Claude Code, que puedes ignorar si no usas Claude Code.</p>
+</li>
+
+<li>
+<h3>Comprueba que la CLI esté accesible</h3>
+<pre class="cmd"><code>which forge-ledger
+<span class="c"># /home/tu-usuario/.local/bin/forge-ledger</span></code></pre>
+<p>Si no imprime nada, <code>~/.local/bin</code> no está en tu <code>PATH</code>. Añádelo al perfil de tu shell: sin eso, el mentor no puede leer ni escribir tu ledger en absoluto.</p>
+</li>
+
+<li>
+<h3>Protege el ledger</h3>
+<p>Un ledger editado a mano falla en silencio, así que algo tiene que hacer imposible la escritura directa. Cuál, depende de tu herramienta.</p>
+<p><strong>Claude Code</strong> puede rechazar una escritura antes de que ocurra. Añade esto a <code>~/.claude/settings.json</code>, combinado con lo que ya haya:</p>
+<pre class="cmd"><code>"hooks": {
+  "PreToolUse": [{
+    "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+    "hooks": [{
+      "type": "command",
+      "command": "&lt;repo&gt;/scripts/guard-ledger.sh"
+    }]
+  }]
+}</code></pre>
+<p><strong>Todo lo demás</strong> obtiene la misma protección del sistema de archivos:</p>
+<pre class="cmd"><code>npm run protect-ledger    <span class="c"># chmod 444 ledger.json</span></code></pre>
+<p>Una edición accidental falla entonces con <code>EACCES</code>, mientras <code>forge-ledger</code> escribe con normalidad, porque sustituye el archivo renombrando uno nuevo encima. Ejecútalo cuando ya tengas un ledger: antes de la sesión uno no hay nada que proteger.</p>
+</li>
+
+<li>
+<h3>Verifica</h3>
+<pre class="cmd"><code>forge-ledger show</code></pre>
+<p>Tu ledger, en el orden de la §7. Si dice que no existe ningún ledger, tu primera sesión será el onboarding.</p>
+</li>
+</ol>
+
+<h2 id="es-route-b2">Ruta B — parte dos: enseñarle el prompt a tu herramienta</h2>
+<p class="deck">Toda herramienta tiene alguna forma de darle a un modelo instrucciones permanentes que seguirá durante toda la conversación. Se llame como se llame en la tuya, ahí es donde va <code>FORGE-PROMPT.md</code>: entero, nunca resumido.</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>Mecanismo</th><th>Herramientas que funcionan así</th><th>Qué haces</th></tr></thead>
+<tbody>
+<tr><td>Un skill o comando con nombre</td><td>Los skills de Claude Code</td><td>Escríbelo en el archivo del skill; invócalo por su nombre</td></tr>
+<tr><td>Un archivo de instrucciones que la herramienta carga sola</td><td>Codex CLI y otras vía <code>AGENTS.md</code>; Gemini CLI vía <code>GEMINI.md</code>; Cursor y Continue vía sus archivos de reglas</td><td>Pon el prompt en ese archivo, o apunta el archivo hacia él</td></tr>
+<tr><td>Una casilla de system prompt o una persona guardada</td><td>Proyectos e instrucciones personalizadas de ChatGPT; Gems de Gemini; system prompts de Ollama y LM Studio; cualquier playground de API</td><td>Pega el prompt ahí</td></tr>
+</tbody>
+</table>
+</div>
+<p>Las convenciones de estas herramientas cambian más rápido que esta página. Si algún nombre de archivo ha cambiado, lo que importa es la forma: encuentra aquello que tu herramienta lee antes de cada mensaje, y pon el prompt ahí.</p>
+
+<h3>En Claude Code — el skill entero, a mano</h3>
+<p>Un skill es un archivo Markdown dentro de una carpeta con nombre. Nada más:</p>
+<pre class="cmd"><code>mkdir -p ~/.claude/skills/forge
+<span class="c"># luego escribe ~/.claude/skills/forge/SKILL.md como:</span>
+<span class="c">#   el frontmatter de abajo, una línea en blanco, y todo FORGE-PROMPT.md</span></code></pre>
+<pre class="cmd"><code>---
+name: forge
+description: Run a session of the Forge apprenticeship. Reads the
+  learner's ledger, opens as the spec directs, teaches, and writes
+  back what was demonstrated. Invoke when the learner types /forge.
+---</code></pre>
+<p>El nombre de la carpeta es el comando, así que <code>skills/forge/</code> te da <code>/forge</code>. La <code>description</code> es lo que Claude lee para decidir que el skill aplica, y por eso nombra el disparador explícitamente.</p>
+<p><code>npm run install-skill</code> hace exactamente esto y nada más: concatena el frontmatter y el prompt en esa ruta. Hazlo a mano una vez si quieres comprobar que no hay magia. Reinicia Claude Code después, o el skill no aparecerá en la lista.</p>
+
+<h3>En cualquier otra cosa</h3>
+<ul>
+<li>Busca en la tabla de arriba el mecanismo de instrucciones permanentes de tu herramienta.</li>
+<li>Dale <strong>todo</strong> <code>FORGE-PROMPT.md</code>. Son unos 95 KB: largo, pero los gates y el ciclo de la lección son el producto, y una versión resumida se deja ambos por el camino.</li>
+<li>Si la herramienta carga un archivo por ruta, apunta al archivo para que siga sincronizado al recompilar. Si quiere texto, pégalo y vuelve a pegarlo tras cada cambio.</li>
+</ul>
+<p><strong>Comprueba que ha calado.</strong> Abre una sesión y pregunta: <em>«¿en qué runtime estás, y cómo lo sabes?»</em> Un modelo que ha cargado el prompt nombra <code>agentic+hooks</code>, <code>agentic</code> o <code>chat</code> y dice que lo comprobó ejecutando <code>forge-ledger show</code>. Cualquier respuesta más vaga significa que el prompt no llegó, y estás hablando con un asistente amable en lugar de con Forge.</p>
+
+<p class="ptr">→ Tu instalación está lista. Sigue en <a href="#es-session">Una sesión, de principio a fin</a>.</p>
+<h2 id="es-session">Una sesión, de principio a fin</h2>
+<p class="deck">Los mismos siete movimientos cada vez, sean cuales sean tus horas.</p>
+
+<ol class="steps">
+<li>
+<h3>Abre el tablero primero</h3>
+<pre class="cmd"><code>cd ~/projects/the-forge &amp;&amp; npm run dev
+<span class="c"># http://localhost:5173</span></code></pre>
+<p>Lee la tarjeta <strong>Pick up here</strong> antes que nada. Se escribió para este momento exacto, por alguien que sabía que llegarías sin recordar la vez anterior. Haz lo que dice.</p>
+</li>
+
+<li>
+<h3>Abre tu agente en el proyecto que estás construyendo</h3>
+<pre class="cmd"><code>cd ~/ruta/a/tu-proyecto
+<span class="c"># y abre aquí tu agente — claude, codex, gemini, cursor…</span></code></pre>
+<p>No en <code>the-forge</code>. En un runtime agentic, Forge puede leer tus archivos y ejecutar tus tests, y ahí está la mayor parte de su valor: arráncalo donde está el trabajo.</p>
+</li>
+
+<li>
+<h3>Empieza la sesión</h3>
+<p>En Claude Code eso es <code>/forge</code>. En cualquier otra herramienta es lo que invoque las instrucciones permanentes que configuraste en la parte dos, que a menudo es simplemente abrir una conversación en el proyecto o la persona que contiene el prompt, y decir <strong>empezar</strong>.</p>
+<p>Ese es todo el prompt. No resumas la sesión anterior, no pegues tu ledger, no expliques dónde lo dejaste. Forge lee el ledger él mismo antes de decir una palabra, y sabe más de tus últimas diez sesiones que tú. (La única excepción es el runtime chat, que no puede leer archivos: ahí, pegar el ledger <em>es</em> el primer movimiento, y Forge te lo pedirá.)</p>
+</li>
+
+<li>
+<h3>Arranca el temporizador cuando empieces de verdad</h3>
+<p>No cuando te sientas, sino cuando empieza el primer bloque. Todo lo que el dashboard dice sobre tu semana depende de que esto sea honesto.</p>
+</li>
+
+<li>
+<h3>Trabaja el ciclo</h3>
+<p>Una sesión abre con una orientación de una línea y una comprobación de recuperación sobre algo que no has tocado en varias sesiones. Luego el bloque en sí. Espera que te pidan predecir la salida antes de ejecutar, romper algo que funciona, y explicarlo de vuelta sin la metáfora. Esos tres son donde aterriza el aprendizaje; también son los que parecen saltables.</p>
+<p>Si vienes plano, dilo. Hay un menú —push, consolidate, play, cold check, lab— y elegir <em>consolidate</em> tres sesiones seguidas es marcar el ritmo, no quedarse atrás.</p>
+</li>
+
+<li>
+<h3>Di cuándo puedes volver</h3>
+<p>Forge pregunta al cerrar: qué días, y más o menos a qué horas. Responde con la verdad y no con el plan que te gustaría cumplir: «martes y jueves por la mañana, sábado si la semana acompaña» es mejor respuesta que «casi todas las tardes» si casi todas las tardes es aspiracional.</p>
+<p>Lo usa para marcar el ritmo, no para presionar. Nadie está comprobando si apareciste, y el número nunca se convierte en una fecha límite (§1: la restricción no es el objetivo). Lo que hace es evitar que el plan se dimensione para una semana que no tienes: la forma más común en que fracasan estos programas es un calendario construido sobre horas que nunca fueron reales.</p>
+<p>Si tu disponibilidad cambia, dilo en cualquier apertura. Es una conversación de planificación, se tiene una vez, y luego se deja.</p>
+</li>
+
+<li>
+<h3>Deja que Forge la cierre</h3>
+<p>Una sesión no ha terminado hasta que <code>next_session.first_action</code> está escrito. Si estás a punto de marcharte, di «cerremos» y dale un minuto. Salir a mitad de sesión te cuesta el movimiento de apertura de mañana, que es la línea más valiosa del ledger.</p>
+</li>
+</ol>
+
+<h2 id="es-board">Leer el tablero</h2>
+<p class="deck">Seis números, en el dashboard y en cada <code>forge-ledger show</code>. Esto es lo que significan antes de que tengas los tuyos.</p>
+<div class="status">
+  <div><span class="n">—</span><span class="l">sesiones</span></div>
+  <div><span class="n">—</span><span class="l">fase</span></div>
+  <div><span class="n">—</span><span class="l">semana</span></div>
+  <div><span class="n">—</span><span class="l">en su techo</span></div>
+  <div><span class="n">—</span><span class="l">criterios</span></div>
+  <div><span class="n on">open</span><span class="l">gate</span></div>
+</div>
+<p class="caption">Sesiones que realmente has hecho · la fase en la que estás y su número · dónde vas en tu track, si elegiste uno · conceptos terminados en su techo · criterios de salida demostrados sobre el total · y si la siguiente fase es alcanzable o el capstone todavía la bloquea.</p>
+<p>Ninguno de estos se mueve porque pase el tiempo. Sesiones cuenta sentadas, no días; los conceptos llegan a su techo con evidencia observada; el gate se abre con un capstone. Un mes fuera no cambia ninguno, y ese es justamente el punto.</p>
+
+<h3>Los paneles</h3>
+<div class="cards">
+<div class="card">
+<h3>Pick up here</h3>
+<p>El siguiente movimiento literal: «abre <code>x.ts</code>, añade <code>y</code>». Arriba del todo porque es lo que necesitas en el minuto cero y nada más lo es.</p>
+</div>
+<div class="card">
+<h3>Fase y gate</h3>
+<p>Sesiones, conceptos en su techo, horas. <strong>Open</strong> significa que la siguiente fase es alcanzable; <strong>LOCKED</strong> significa que un capstone aún no ha pasado.</p>
+</div>
+<div class="card">
+<h3>La semana</h3>
+<p>Seis barras, de lunes a sábado, cada una contra el suelo de 1,5 horas. Muestra la forma de una semana, que un solo número no puede.</p>
+</div>
+<div class="card">
+<h3>Criterios de salida</h3>
+<p>Lo que tienes que <em>demostrar</em> para terminar la fase: tareas, nunca temas. Son el gate, no una lista de asignaturas.</p>
+</div>
+<div class="card">
+<h3>Wins</h3>
+<p>El panel central y lo más grande de la página: cosas concretas que ahora puedes hacer y antes no. Crece todo el año. Seis por página.</p>
+</div>
+<div class="card">
+<h3>Conceptos</h3>
+<p>Nivel contra techo, por concepto. Un concepto de techo 3 que está en 3 está <em>terminado</em>, no descuidado: eso es lo que hace que el plan se pueda acabar.</p>
+</div>
+</div>
+
+<h2 id="es-timer">Los límites del temporizador</h2>
+<p class="deck">Bloques de veinticinco minutos, descansos de cinco, quince después de cada cuarto. Más allá de eso impone tres límites, y solo los dos primeros los decides tú.</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>A las</th><th>Qué pasa</th><th>Quién decide</th></tr></thead>
+<tbody>
+<tr><td>1,5 horas</td><td>Pregunta si quieres seguir. Es el suelo que una sesión debería alcanzar, así que también es el primer punto donde parar es una opción real.</td><td>Tú</td></tr>
+<tr><td>3 horas</td><td>Vuelve a preguntar.</td><td>Tú</td></tr>
+<tr><td>5 horas</td><td>Cierra el día. Sin preguntar, sin excepciones.</td><td>No tú</td></tr>
+<tr><td>22:00–07:00</td><td>No arranca.</td><td>No tú</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Los dos últimos no son teatro de productividad. Casi todo el mundo que hace esto lo encaja alrededor de un trabajo, y eso significa que una sesión tardía roba de las pocas horas que el plan realmente tiene. Y un aprendizaje que nunca tiene una noche para consolidarse no sobrevive la semana: dormir es parte del método, no tiempo libre de él.</p>
+
+<h2 id="es-ledger">El ledger</h2>
+<p class="deck">Un archivo JSON bajo git en <code>~/.claude/forge/ledger.json</code>. Cada sesión deja un commit.</p>
+
+<pre class="cmd"><code>forge-ledger show                 <span class="c"># tu estado, legible</span>
+forge-ledger show --json          <span class="c"># la forma cruda</span>
+git -C ~/.claude/forge log        <span class="c"># un commit por patch</span>
+git -C ~/.claude/forge show HEAD  <span class="c"># qué cambió la última sesión</span></code></pre>
+
+<p>Para deshacer una sesión que registró algo mal, revierte su commit: <code>git -C ~/.claude/forge revert &lt;sha&gt;</code>. Para empezar todo el aprendizaje de nuevo, borra el directorio. Las dos son opciones reales y ninguna es una emergencia.</p>
+
+<div class="warn">
+<h3>Nunca edites <code>ledger.json</code> a mano</h3>
+<ul>
+<li>El hook te detendrá, y te detiene por una razón: una edición a mano tiene éxito aunque esté mal, y nada saca el problema a la superficie. Un ledger que empieza a mentir en silencio es peor que uno que falta, porque te enteras en el mes siete.</li>
+<li>Si el propio Forge intenta una escritura directa y se la deniegan, eso es el sistema funcionando. Reintentará por la CLI.</li>
+</ul>
+</div>
+
+<h2 id="es-gate">Cuando una fase se bloquea</h2>
+<p>Una fase se bloquea cuando su capstone no pasa. No has suspendido nada: has encontrado la parte que necesita más repeticiones, que es para lo que existe el paso.</p>
+<ul>
+<li>Se abre una <strong>training room</strong> en la misma sesión: diez ejercicios dirigidos a la única cosa que falló, no a la fase entera.</li>
+<li><strong>Un ejercicio por sesión, como máximo.</strong> Es remediación, no una paliza.</li>
+<li>Tres fallos seguidos en cualquier punto de la rampa significan que la pieza que falta está <em>debajo</em> de esta fase, no dentro. Forge para, va a buscar el prerrequisito y enseña eso. Déjale.</li>
+<li>Sales aprobando los diez y luego intentando una opción de capstone <em>distinta</em>, nunca la que fallaste.</li>
+</ul>
+
+<h2 id="es-return">Volver tras una pausa</h2>
+<p class="deck">Las ausencias son esperables a lo largo de un año. Lo que acaba con los programas no es el hueco, es la vuelta.</p>
+<ul>
+<li><strong>Menos de dos semanas</strong> — simplemente retoma. Sin repaso, y Forge no lo mencionará.</li>
+<li><strong>De dos a ocho semanas</strong> — una sesión entera de recuperación antes de cualquier contenido nuevo. Espera una o dos demotions; son contabilidad, no un veredicto.</li>
+<li><strong>Más de dos meses</strong> — vuelves a entrar una fase por debajo de donde lo dejaste, por su capstone. Si lo pasas, saltas directamente de vuelta.</li>
+</ul>
+<p>Abre exactamente como siempre. No expliques la ausencia. No te van a preguntar por ella.</p>
+
+<div class="warn">
+<h3>Los movimientos que sí rompen esto</h3>
+<ul>
+<li><strong>Pedirle a Forge que escriba el código.</strong> En su lugar te dará la siguiente pista más pequeña, y eso es el producto que estás pagando. La salida de emergencia existe —«enséñamelo y ya»— pero luego modificas lo que te enseñó.</li>
+<li><strong>Saltarte «rómpelo» y «explícalo de vuelta».</strong> Todos los tutoriales de internet omiten esos dos. Por eso los tutoriales no funcionan.</li>
+<li><strong>Decir que dominas un concepto en vez de demostrarlo.</strong> Los niveles solo se mueven con evidencia observada, e inflar uno te mete en un paso de construcción para el que no estás listo.</li>
+<li><strong>Trabajar más allá del corte de 5 horas o antes de las 7:00.</strong> Bajo presión el instinto es recortar primero el descanso. Eso cambia lo que se está construyendo por la apariencia de velocidad.</li>
+</ul>
+</div>
+<h2 id="es-share">Compartir tus datos</h2>
+<p class="deck">Totalmente opcional, y nada lo hace automáticamente. Si nunca ejecutas este comando, nada de tu aprendizaje sale jamás de tu máquina.</p>
+<p>El registro que construyes durante un año es la mejor evidencia que existe sobre si el plan de estudios funciona: dónde se atasca la gente, qué explicaciones despistan, cuánto duran las fases de verdad. Esa evidencia solo sirve en conjunto, y solo merece la pena tenerla si fue dada.</p>
+<pre class="cmd"><code>forge-ledger export "gpt-5"        <span class="c"># el modelo que hayas usado</span>
+forge-ledger export &gt; report.json</code></pre>
+<p>En una ventana de chat sin terminal, pídeselo a tu modelo: el prompt lleva la misma lista de campos y las mismas reglas sobre qué dejar fuera. Solo lo producirá si se lo pides; tiene instrucciones de no sugerirlo nunca.</p>
+<h3>Qué se queda fuera sin que tengas que hacer nada</h3>
+<p>Tu nombre, tu objetivo con tus propias palabras, tu restricción, tu proyecto, tu dominio de metáforas, tus wins, tus open loops, tu próxima acción y cuándo estuviste activo por última vez. También se van qué capstone elegiste, a qué apuntaba tu training room, y el texto de cualquier problema de Lab.</p>
+<p>El campo <strong>constraint</strong> es el que conviene notar: suele contener dinero, un visado o una situación laboral. Se retiene el primero y nunca aparece en el archivo.</p>
+<h3>Qué se queda, y por qué</h3>
+<p>Dónde te atascaste y qué movimiento te desatascó · qué bajó de nivel · las misconceptions que trabajaste · metáforas que se te quedaron pequeñas · sesiones y horas por fase · resultados de capstones · tus conceptos como nivel-contra-techo. <code>last_seen</code> pasa a ser «hace n sesiones» en vez de un número de sesión, así que nada en el archivo te sitúa en un calendario.</p>
+<p>Más un bloque <strong>backlog</strong>: cuántos loops están abiertos, cuántos criterios de salida faltan, cuántos peldaños te quedan por subir. Solo cuentas: el <em>texto</em> de tus open loops es tuyo y se queda fuera salvo que añadas <code>--open-loops</code>, porque describe tu proyecto y no el curso.</p>
+<p>Parte de eso es texto que escribiste tú: nombres de fase, nombres de conceptos, misconceptions. <strong>Lee el archivo antes de enviarlo.</strong> El comando imprime exactamente cuáles son esos campos, encima de la salida.</p>
+<div class="warn">
+<h3>Cómo se permite que funcione esto</h3>
+<ul>
+<li><code>export</code> imprime en tu pantalla. No hay endpoint, ni clave, ni subida, ni ninguna versión de esto que envíe algo por su cuenta. Ejecutarlo no transmite nada.</li>
+<li>Enviar el archivo es algo aparte que haces a propósito, a una persona, después de haberlo leído.</li>
+<li>Si alguien te lo pide y prefieres no darlo, esa es una respuesta completa y nadie debería insistir.</li>
+</ul>
+</div>
+
+<h2 id="es-trouble">Si algo va mal</h2>
+<p class="deck">Agrupado por lo que falla, no por herramienta. El primero es el más común en cualquier cosa que no sea Claude Code, y no se anuncia como un error.</p>
+
+<h3>El mentor no se comporta como Forge</h3>
+<p>Este es el fallo que parece un éxito. Tienes un asistente amable y elocuente que explica bien las cosas, y nada de la maquinaria. Señales delatoras: responde en vez de preguntar, te entrega código que funciona, nunca menciona una fase ni un gate, y nunca te pidió el ledger.</p>
+<p><strong>Compruébalo directamente.</strong> Pregunta: <em>«¿en qué runtime estás, y cómo lo sabes?»</em> Un modelo que tiene el prompt nombra <code>agentic+hooks</code>, <code>agentic</code> o <code>chat</code> y dice cómo lo comprobó. Cualquier cosa más vaga y el prompt no está en el contexto.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Causa</th><th>Solución</th></tr></thead>
+<tbody>
+<tr><td>El archivo de instrucciones no se está leyendo en este directorio</td><td>La mayoría de herramientas cargan <code>AGENTS.md</code> / <code>GEMINI.md</code> / archivos de reglas relativos a donde arrancaste. Comprueba que el archivo esté en <em>este</em> proyecto, no en el que lo configuraste</td></tr>
+<tr><td>La herramienta cachea las instrucciones al arrancar</td><td>Reiníciala. Claude Code no listará un skill añadido a mitad de sesión</td></tr>
+<tr><td>Pegaste un resumen, o el pegado se truncó</td><td><code>FORGE-PROMPT.md</code> pesa ~95 KB. Si lo que pegaste es mucho más corto, los gates y el ciclo de la lección son justo lo que se perdió</td></tr>
+<tr><td>La conversación se alargó y lo empujó fuera</td><td>Empieza una conversación nueva y vuelve a cargar el prompt. En un modelo de contexto pequeño esto seguirá pasando: eso es el modelo, no la configuración</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Sigue escribiendo tu código</h3>
+<p>Dilo sin rodeos: <em>«no lo escribas, dame la siguiente pista más pequeña»</em>. El spec es explícito en que la lucha es el mecanismo, y un modelo que tiene el prompt se corregirá.</p>
+<p>Si vuelve a desviarse cada una o dos sesiones, eso es seguimiento de instrucciones, no configuración. Es la señal más clara de que el modelo que has elegido no da la talla para esto, y ninguna cantidad de re-prompting lo arregla.</p>
+
+<h3>Cualquier runtime</h3>
+<div class="tw">
+<table>
+<thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+<tbody>
+<tr><td><code>forge-ledger: command not found</code></td><td><code>~/.local/bin</code> no está en el <code>PATH</code></td><td>Añádelo al perfil de tu shell y abre una shell nueva</td></tr>
+<tr><td>Tú puedes ejecutar <code>forge-ledger</code> pero el agente no</td><td>Los agentes suelen usar una shell no interactiva que nunca lee tu perfil</td><td>Dale la ruta absoluta: <code>~/.local/bin/forge-ledger</code></td></tr>
+<tr><td>El modelo editó <code>ledger.json</code> directamente y funcionó</td><td>No hay guard instalado; este es justo el fallo que el guard existe para evitar</td><td><code>npm run protect-ledger</code>, o instala el hook en Claude Code. Luego compara el archivo con <code>git -C ~/.claude/forge log</code></td></tr>
+<tr><td>Un patch fue rechazado</td><td>Las formas de los valores no cuadraban con el esquema: funciona según diseño</td><td>Nada. Imprime todos los problemas y reintenta. No hubo escritura parcial</td></tr>
+<tr><td>«ledger is not valid JSON»</td><td>Una escritura interrumpida o editada a mano</td><td>Se recupera del último commit automáticamente; revisa <code>git -C ~/.claude/forge log</code></td></tr>
+<tr><td>El dashboard está vacío pero <code>forge-ledger show</code> funciona</td><td>Un servidor viejo sigue ocupando el puerto 5174</td><td><code>ss -lptn 'sport = :5174'</code>, mata ese pid, <code>npm run dev</code></td></tr>
+<tr><td>Un concepto que ya dominas vuelve una y otra vez</td><td>Su techo es <code>exposure</code>: fuera de la escalera por diseño</td><td>Nada. Esos vuelven todo el año a propósito</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Solo Claude Code</h3>
+<div class="tw">
+<table>
+<thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+<tbody>
+<tr><td><code>/forge</code> no aparece</td><td>El skill no está instalado, o Claude Code arrancó antes de que lo estuviera</td><td><code>npm run install-skill</code>, y reinicia</td></tr>
+<tr><td>Se denegó una escritura a <code>ledger.json</code></td><td>El hook, haciendo su trabajo</td><td>Nada. Reintentará por la CLI</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Solo runtime chat</h3>
+<p>Todo lo de aquí sale de la misma raíz: el almacenamiento eres tú, y un almacenamiento que se regenera cada sesión se desgasta.</p>
+<div class="tw">
+<table>
+<thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+<tbody>
+<tr><td>El ledger que te devolvió es más corto que el que pegaste</td><td>Regeneró el documento y perdió entradas, normalmente de <code>wins</code>, <code>misconceptions</code> o <code>active</code></td><td><strong>No lo guardes.</strong> Restaura <code>ledger-1.json</code>, pégalo otra vez y pide el documento completo con todas las listas intactas</td></tr>
+<tr><td>Resumió el ledger para ahorrar espacio</td><td>Prohibido explícitamente por el prompt, y aun así los modelos lo hacen</td><td>La misma solución. Un ledger acortado es un ledger que miente, y la mentira sigue invisible durante meses</td></tr>
+<tr><td>Cerraste la pestaña sin guardar el bloque JSON</td><td>Nadie lo apuntó salvo tú</td><td>Restaura <code>ledger-1.json</code> y rehaz la sesión. Para esto guardas dos copias</td></tr>
+<tr><td>Te promovió al nivel 5</td><td>No puede observar depuración sin ejecutar nada</td><td>Discútelo y pídele que justifique la evidencia. El prompt le dice que se niegue; si no lo hace, trata el nivel como un 4</td></tr>
+<tr><td>Dejó de aplicar los gates al final de una sesión larga</td><td>El prompt está saliendo del contexto</td><td>Cierra la sesión bien, empieza una conversación nueva, recarga el prompt, pega el ledger</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Comprobación rápida, cualquier runtime</h3>
+<pre class="cmd"><code>forge-ledger show          <span class="c"># ¿se lee tu estado?</span>
+git -C ~/.claude/forge log <span class="c"># ¿un commit por sesión?</span></code></pre>
+<p>Si las dos cosas se ven bien, no hay nada roto que importe. Todo lo demás es un detalle de instalación.</p>
+
+<h2 id="es-tldr">La versión de una línea</h2>
+<p><code>npm run dev</code>, lee la tarjeta de pick-up, abre tu herramienta en tu proyecto, empieza la sesión, arranca el temporizador, y no salgas antes de que se cierre.</p>
+
+<h2 id="es-maintainers">Para quien mantiene el curso</h2>
+<p class="deck">Todo lo de arriba es para quien hace el aprendizaje. Esta última sección no: es para quien cambia el plan según lo que va llegando. Si estás aquí para aprender, ya has terminado.</p>
+
+<h3>Comparar lo que llega</h3>
+<p>La §3.5 ya dice que el registro diagnostica el curso y no al aprendiz. Esto simplemente lo lee a través de varias personas en vez de una.</p>
+<pre class="cmd"><code>forge-ledger compare ana.json luis.json mira.json
+forge-ledger compare *.json</code></pre>
+<p>Toma exports, no ledgers, así que nada personal entra nunca en la sala. Cada archivo se comprueba buscando <code>"forge_export": 1</code> y se rechaza si no lo tiene.</p>
+<h3>Qué imprime</h3>
+<pre class="cmd"><code>BACKLOG
+learner  loops  /sess  unmet  below  rungs  decay  caps  room
+-------  -----  -----  -----  -----  -----  -----  ----  ----
+ana          2   0.33      3      2      3      0     0     -
+luis         5   0.56      3      2      6      0     0     -
+mira         1   0.25      3      2     11      0     0     -
+
+STALLS BY RUNG  (10 across 3)
+rung 5 — check the prerequisite      6    60%
+rung 1 — re-enter the cycle earlier  3    30%
+rung 3 — halve the example           1    10%
+
+  ! rung 5 resolves 60% of stalls: the plan is outrunning its foundations</code></pre>
+<p>Luego las misconceptions que aparecieron en más de un aprendiz, y la dispersión de sesiones con la que cada uno había llegado a cada fase.</p>
+<h3>Las tres cosas que merece la pena leer</h3>
+<div class="cards">
+<div class="card"><h3>rungs</h3><p>La suma de <code>techo − nivel</code> sobre los conceptos abiertos de un aprendiz: el trabajo que realmente queda. Debería <em>bajar</em> entre exports de una misma persona. Que suba mientras suben las sesiones significa que llegan conceptos más rápido de lo que se terminan.</p></div>
+<div class="card"><h3>El aviso de rung</h3><p>Salta cuando un rung de la §3.5 resuelve más del 40% de los stalls. Que domine el rung 5 significa que el plan corre por delante de sus cimientos; los rungs 1–3 significan que los ejemplos son demasiado grandes. Un aprendiz es una mala semana; tres son un defecto.</p></div>
+<div class="card"><h3>Misconceptions compartidas</h3><p>La edición más valiosa disponible. Un modelo mental equivocado al que llegan dos desconocidos es una metáfora haciendo daño, y se arregla de una pasada.</p></div>
+</div>
+<div class="warn">
+<h3>Dónde te va a engañar</h3>
+<ul>
+<li><strong>Los rungs solo cuentan conceptos ya en juego.</strong> Mide el backlog de la fase actual, no el del programa entero: alguien en la Fase 1 y alguien en la Fase 6 no son comparables en esa columna.</li>
+<li><strong>El emparejamiento de misconceptions es solapamiento de palabras.</strong> Un acierto es señal fuerte; un fallo es <em>ninguna información</em>. Dos aprendices trabajando en idiomas distintos no se emparejarán nunca automáticamente. Lee las listas enteras.</li>
+<li><strong>Dos o tres exports no te dicen casi nada.</strong> Esto empieza a valer la pena alrededor de cinco o seis. Hasta entonces, trata cada patrón como una hipótesis, no como un hallazgo.</li>
+</ul>
+</div>
+
+<aside class="banner">
+<p class="tag">Por qué está aquí este enlace</p>
+<p class="line">Forge funciona sobre Claude Code. Si esto te ha dado ganas de probarlo, registrarte con el enlace de abajo me da <strong>10 £ en créditos de uso</strong> — dicho claramente, para que sepas por qué está aquí el enlace.</p>
+<p class="cta"><a href="https://claude.ai/referral/wevIwZMCuA">claude.ai/referral/wevIwZMCuA</a></p>
+</aside>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var bar = document.querySelector('.langbar');
+  var panes = document.querySelectorAll('[data-lang]');
+  var buttons = bar.querySelectorAll('button');
+
+  function apply(lang) {
+    panes.forEach(function (p) { p.classList.toggle('on', p.dataset.lang === lang); });
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.set === lang)); });
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('forge:lang', lang); } catch (e) { /* private mode */ }
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('forge:lang'); } catch (e) { /* ignore */ }
+  var initial = saved || ((navigator.language || 'en').toLowerCase().indexOf('es') === 0 ? 'es' : 'en');
+  apply(initial === 'es' ? 'es' : 'en');
+
+  bar.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-set]');
+    if (b) apply(b.dataset.set);
+  });
+})();
+</script>
